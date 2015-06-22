@@ -24,6 +24,12 @@ def get_selenium_webdriver(browser_type, mobile = False):
 		@param browser_type
 			Specifies the type of the target browser (e.g., Chrome, Firefox, etc.).
 
+		@param mobile
+			By default, mobile = False, so the webdriver will be returned as is,
+			with no extra config.
+			But, if mobile = True, then the webdriver will be configured to spoof
+			a mobile browser's user-agent.
+		
 		@return
 			- The Selenium webdriver object for the target browser type
 			- None if no such object can be constructed (b/c of missing driver executable,
