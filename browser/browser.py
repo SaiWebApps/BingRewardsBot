@@ -78,14 +78,14 @@ class Browser:
 				then return the element with name="login").
 				- None if there is no such element.
 		'''
-		# Try to get the element NUM_RETRIES times (best effort). After that, if
+		# Try to get the element _NUM_RETRIES times (best effort). After that, if
 		# the element still can't be retrieved, return None.
 		wait_successful = self._wait(attribute_type, attribute_value, wait_condition)
 		count = 1
 		while not wait_successful and count <= _NUM_RETRIES:
 			self.sleep(_WAIT_TIME_SECONDS * count)
 			wait_successful = self._wait(attribute_type, attribute_value, wait_condition)
-			print('Retry #' + str(count) + '/' + str(NUM_RETRIES)  + 'for ' + attribute_value)
+			print('Retry #' + str(count) + '/' + str(_NUM_RETRIES)  + 'for ' + attribute_value)
 			count = count + 1
 		return self.browser.find_element(attribute_type, attribute_value) if wait_successful else None
 
