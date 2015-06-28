@@ -1,4 +1,5 @@
 import enum
+import time
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -223,13 +224,13 @@ class Browser:
 	def sleep(self, num_seconds = _WAIT_TIME_SECONDS):
 		'''
 			@param num_seconds
-				Number of seconds that browser should pause/wait
-				before moving on to an automated task.
+				Number of seconds that browser should pause/wait before moving
+				on to an automated task.
 
 			@return
 				This Browser object (enables calls to be chained).
 		'''
-		WebDriverWait(self.browser, num_seconds)
+		time.sleep(num_seconds)
 		return self
 
 	def close(self):
