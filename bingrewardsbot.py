@@ -9,9 +9,8 @@ def main():
 	for user in creds:
 		strategy = BingDesktopStrategy(BrowserType.PhantomJS)
 		strategy.execute(user['email'], user['password'], 30)
-
 	for user in creds:
-		strategy = BingMobileStrategy(BrowserType.Chrome)
+		strategy = BingMobileStrategy(BrowserType.PhantomJS)
 		strategy.execute(user['email'], user['password'], 20)
 
 if __name__ == '__main__':

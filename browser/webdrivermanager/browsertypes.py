@@ -16,11 +16,14 @@ class BrowserType(enum.Enum):
 	IE = 'ie'
 	PhantomJS = 'phantomjs'
 
-# Mobile browser user-agent string - allows desktop browser to pretend
-# to be a mobile browser
+# Mobile browser user-agent string - allows desktop browser to pretend to be a mobile browser
+# First User-Agent = Android browser; works for Firefox and Chrome webdrivers
 _MOBILE_BROWSER_USER_AGENT = 'Mozilla/5.0 (Linux; U; Android 4.0.3; ko-kr; ' + \
 	'LG-L160L Build/IML74K) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 ' + \
 	' Mobile Safari/534.30'
+# Second User-Agent = IPad/IPhone browser; works for PhantomJS webdriver
+_MOBILE_BROWSER_USER_AGENT2 = 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) ' + \
+	'AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10'
 
 # WebDriver Abstract Class
 class WebDriver:
@@ -74,7 +77,6 @@ class ChromeDriver(WebDriver):
 		super().__init__(exec_path, mobile)
 
 	def get_driver(self):
-		chrome_driver = webdriver.Chrome
 		executable_path = self.exec_path
 		opts = Options()
 		if self.mobile:
@@ -86,7 +88,11 @@ class PhantomJSDriver(WebDriver):
 		super().__init__(exec_path, mobile)
 
 	def get_driver(self):
-		return webdriver.PhantomJS(self.exec_path, service_log_path = os.devnull)
+		capabilities = dict(DesiredCapabilities.PHANTOMJS)
+		if self.mobile:
+			capabilities['phantomjs.page.settings.userAgent'] = _MOBILE_BROWSER_USER_AGENT2
+		return webdriver.PhantomJS(self.exec_path, service_log_path = os.devnull, \
+			desired_capabilities = capabilities)
 
 # Other constants - used for webdriver configuration
 SELENIUM_WEBDRIVER = 'webdriver'
