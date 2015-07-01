@@ -17,6 +17,7 @@ class AccumulatePointsStrategy:
 				URL that the browser will opened with.
 		'''
 		self.browser = Browser(browser_type, mobile = is_mobile, url = url)
+		self.is_mobile = is_mobile
 
 	def sign_in(self, email, password):
 		'''
@@ -49,6 +50,23 @@ class AccumulatePointsStrategy:
 		for query in random_queries:
 			self.browser.type_and_submit(AttributeType.Name, 'q', query, clear_after_submit = True)
 
+	def get_num_rewards_points(self, login_creds = None):
+		'''
+			@param login_creds
+				(Optional) Tuple where 1st element = email, 2nd = password for a Bing Rewards account;
+				if not specified, then assume that the user has already signed in.
+
+			@return
+				The total number of Bing Rewards points accumulated by some user.
+		'''
+		# If login creds are specified, then the user has not signed in yet, so sign in to the
+		# specified account.
+		if login_creds:
+			self.sign_in(login_creds[0], login_creds[1])
+		# Give some time for sign-in to sink in - it takes some time for the # of points to be updated.
+		self.browser.sleep(10)
+		return 0	# Let children determine the impl specifics.
+
 	def finish(self):
 		'''
 			Close the browser, and release all resources.
@@ -66,8 +84,13 @@ class AccumulatePointsStrategy:
 				(Required) Number of Bing searches that user with given
 				credentials wants to automate.
 		'''
+		print('Automating searches for ', email, '(Mobile = ', str(self.is_mobile), '): ')
 		self.sign_in(email, password)
+
+		print('\tInitial # of Points = ' + str(self.get_num_rewards_points()))
 		self.perform_random_searches(num_searches)
+		print('\tFinal # of Points = ' + str(self.get_num_rewards_points()) + '\n')
+
 		self.finish()
 
 # Bing searches on desktop browser
@@ -75,6 +98,11 @@ class BingDesktopStrategy(AccumulatePointsStrategy):
 	def __init__(self, browser_type):
 		super().__init__(browser_type = browser_type, is_mobile = False, \
 			url = 'http://www.bing.com')
+
+	def get_num_rewards_points(self, login_creds = None):
+		super().get_num_rewards_points(login_creds)	# Login if necessary.
+		num_points = self.browser.get_value(AttributeType.Id, 'id_rc')
+		return num_points if num_points else 0
 
 	def sign_in(self, email, password):
 		login_form = super().sign_in(email, password)
@@ -87,6 +115,16 @@ class BingMobileStrategy(AccumulatePointsStrategy):
 	def __init__(self, browser_type):
 		super().__init__(browser_type = browser_type, is_mobile = True, \
 			url = 'http://www.bing.com/rewards/signin')
+
+	def get_num_rewards_points(self, login_creds = None):
+		super().get_num_rewards_points(login_creds)
+		# Navigate to user's Bing Rewards profile to get # of points.
+		self.browser.open('https://www.bing.com/rewards/settings/profileframed')
+		self.browser.sleep(10)
+		num_points = self.browser.get_value(AttributeType.ClassName, 'credits')
+		# Now, navigate back to bing.com to begin automated searches.
+		self.browser.open('http://www.bing.com')
+		return num_points if num_points else 0
 
 	def sign_in(self, email, password):
 		login_form = super().sign_in(email, password)

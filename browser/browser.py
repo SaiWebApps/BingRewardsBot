@@ -86,7 +86,7 @@ class Browser:
 		while not wait_successful and count <= _NUM_RETRIES:
 			self.sleep(_WAIT_TIME_SECONDS * count)
 			wait_successful = self._wait(attribute_type, attribute_value, wait_condition)
-			print('Retry #' + str(count) + '/' + str(_NUM_RETRIES)  + 'for ' + attribute_value)
+			print('Retry #' + str(count) + '/' + str(_NUM_RETRIES)  + ' for ' + attribute_value)
 			count = count + 1
 		return self.browser.find_element(attribute_type, attribute_value) if wait_successful else None
 
@@ -220,6 +220,18 @@ class Browser:
 			self.submit(field_attr_type_enum, field_attr_value)
 		
 		return self
+
+	def get_value(self, attribute_type_enum, attribute_value):
+		'''
+			For <span id="example"> Value </span>:
+				@param attribute_type_enum = AttributeType.id
+				@param attribute_value = "example"
+				@return "Value"
+
+			But if there is no element with id = "example", then return None.
+		'''
+		target_elem = self._get_element(attribute_type_enum.value, attribute_value)
+		return target_elem.text if target_elem else None
 
 	def sleep(self, num_seconds = _WAIT_TIME_SECONDS):
 		'''
