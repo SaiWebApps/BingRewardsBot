@@ -118,14 +118,13 @@ class BingMobileStrategy(AccumulatePointsStrategy):
 
 	def get_num_rewards_points(self, login_creds = None):
 		super().get_num_rewards_points(login_creds)
-		# Navigate to user's Bing Rewards profile to get # of points.
-		self.browser.open('https://www.bing.com/rewards/settings/profileframed')
-		self.browser.sleep(10)
-		num_points = self.browser.get_value(AttributeType.ClassName, 'credits')
-		# Now, navigate back to bing.com to begin automated searches.
+		dashboard_url = 'https://www.bing.com/rewards/dashboard'
+		if self.browser.get_current_url() != dashboard_url:
+			self.browser.open(dashboard_url)
+		num_points = self.browser.get_value(AttributeType.XPath, '//div[@id="status-bar"]/span')
 		self.browser.open('http://www.bing.com')
 		return num_points if num_points else 0
 
 	def sign_in(self, email, password):
 		login_form = super().sign_in(email, password)
-		self.browser.type_and_submit_form(login_form).open('http://www.bing.com')
+		self.browser.type_and_submit_form(login_form)

@@ -8,8 +8,8 @@ from selenium.webdriver.support import expected_conditions as ExpectedCondition
 
 from webdrivermanager import webdrivermanager
 
-_WAIT_TIME_SECONDS = 30
-_NUM_RETRIES = 10
+_WAIT_TIME_SECONDS = 10
+_NUM_RETRIES = 5
 
 class AttributeType(enum.Enum):
 	Id = By.ID
@@ -84,10 +84,11 @@ class Browser:
 		wait_successful = self._wait(attribute_type, attribute_value, wait_condition)
 		count = 1
 		while not wait_successful and count <= _NUM_RETRIES:
-			self.sleep(_WAIT_TIME_SECONDS * count)
+			self.sleep(_WAIT_TIME_SECONDS)
 			wait_successful = self._wait(attribute_type, attribute_value, wait_condition)
 			print('Retry #' + str(count) + '/' + str(_NUM_RETRIES)  + ' for ' + attribute_value)
 			count = count + 1
+			self.browser.get(self.browser.current_url)	# Refresh the page.
 		return self.browser.find_element(attribute_type, attribute_value) if wait_successful else None
 
 	def open(self, url):
@@ -232,6 +233,9 @@ class Browser:
 		'''
 		target_elem = self._get_element(attribute_type_enum.value, attribute_value)
 		return target_elem.text if target_elem else None
+
+	def get_current_url(self):
+		return self.browser.current_url
 
 	def sleep(self, num_seconds = _WAIT_TIME_SECONDS):
 		'''
