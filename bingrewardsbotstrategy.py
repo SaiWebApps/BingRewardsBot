@@ -32,7 +32,7 @@ class AccumulatePointsStrategy:
 		'''
 		login_form = {
 			AttributeType.Name: {
-				'login': email,
+				'loginfmt': email,
 				'passwd': password
 			}
 		}
