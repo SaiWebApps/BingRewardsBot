@@ -13,7 +13,6 @@ from selenium.webdriver.chrome.options import Options
 class BrowserType(enum.Enum):
 	Firefox = 'firefox'
 	Chrome = 'chrome'
-	IE = 'ie'
 	PhantomJS = 'phantomjs'
 
 # Mobile browser user-agent string - allows desktop browser to pretend to be a mobile browser
@@ -61,16 +60,6 @@ class FirefoxDriver(WebDriver):
 			profile.set_preference('general.useragent.override', _MOBILE_BROWSER_USER_AGENT)
 		return webdriver.Firefox(profile)
 
-# Prerequisite: Internet Explorer must be installed on your system.
-class IeDriver(WebDriver):
-	def __init__(self, exec_path, mobile=False):
-		super().__init__(exec_path, mobile)
-
-	def get_driver(self):
-		caps = DesiredCapabilities.INTERNETEXPLORER
-		caps['ignoreProtectedModeSettings'] = True
-		return webdriver.Ie(self.exec_path, capabilities = caps)
-
 # Prerequisite: Google Chrome must be installed on your system.
 class ChromeDriver(WebDriver):
 	def __init__(self, exec_path, mobile=False):
@@ -83,6 +72,7 @@ class ChromeDriver(WebDriver):
 			opts.add_argument('user-agent=' + _MOBILE_BROWSER_USER_AGENT)
 		return webdriver.Chrome(self.exec_path, chrome_options = opts)
 
+# Headless
 class PhantomJSDriver(WebDriver):
 	def __init__(self, exec_path, mobile=False):
 		super().__init__(exec_path, mobile)
