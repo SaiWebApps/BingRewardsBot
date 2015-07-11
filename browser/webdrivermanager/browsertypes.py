@@ -99,10 +99,6 @@ WEBDRIVER_CONFIG = {
 		'darwin': 'webdrivers/chromedriver.osx',
 		'linux2': 'webdrivers/chromedriver'
 	},
-	BrowserType.IE.value: {
-		SELENIUM_WEBDRIVER: IeDriver,
-		'win32': 'webdrivers/iedriver.exe'
-	},
 	BrowserType.PhantomJS.value: {
 		SELENIUM_WEBDRIVER: PhantomJSDriver,
 		'win32': 'webdrivers/phantomjsdriver.exe',
