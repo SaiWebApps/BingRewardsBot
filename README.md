@@ -22,6 +22,4 @@ python bingrewardsbot.py
 
 ## TODO
 * ~~Add more comments.~~
-* Read list of Hotmail/Outlook accounts from JSON and/or XML file rather than hard-coding them.
 * ~~For each account, display list of points before and after searches to confirm script's success.~~
-* Schedule script to run at user-specified time every day.
