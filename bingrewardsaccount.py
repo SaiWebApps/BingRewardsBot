@@ -4,10 +4,10 @@ from browser.browser import AttributeType
 # Constants
 _SIGN_IN_URL = 'https://www.bing.com/rewards/signin'
 _DASHBOARD_URL = 'https://www.bing.com/rewards/dashboard'
-_PROFILE_URL = 'https://www.bing.com/rewards/settings/profileframed'
 
 DAILY_PC_OFFER_POINTS_XPATH = '//*[@id="credits"]/div[2]/span[1]/span'
 DAILY_PC_POINTS_XPATH = '//div[@id="credits"]/div[2]/span[2]/span'
+
 DAILY_MOBILE_OFFER_POINTS_XPATH = '//*[@id="credit-progress"]/div[3]/span[1]'
 DAILY_MOBILE_OFFER_MAX_POINTS_XPATH = '//*[@id="credit-progress"]/div[3]/span[2]'
 DAILY_CURRENT_MOBILE_POINTS_XPATH = '//*[@id="credit-progress"]/div[5]/span[1]'
@@ -50,7 +50,7 @@ class AccountCredentials:
 		self.password = password
 
 class AbstractAccountManager:
-	def __init__(self, browser, account_creds = None):
+	def __init__(self, browser = None, account_creds = None):
 		self.browser = browser
 		self.account_creds = account_creds
 
@@ -163,10 +163,6 @@ class DesktopAccountManager(AbstractAccountManager):
 		return account_details
 
 class MobileAccountManager(AbstractAccountManager):
-	def sign_out(self):
-		self.browser.open(_PROFILE_URL)
-		return self.browser.click(AttributeType.XPath, '//*[@id="pf"]/div[2]/a[2]')
-
 	@convert_result_to_uint
 	@go_to_and_return_from(_DASHBOARD_URL)
 	def get_total_num_points(self):
@@ -176,13 +172,13 @@ class MobileAccountManager(AbstractAccountManager):
 	@go_to_and_return_from(_DASHBOARD_URL)
 	def get_daily_device_points(self):
 		return [self.browser.get_value(AttributeType.XPath, DAILY_CURRENT_MOBILE_POINTS_XPATH), \
-			self.browser.get_value(AttributeType.XPath, DAILY_MAX_MOBILE_POINTS_XPATH)]
+			self.browser.get_value(AttributeType.XPath, DAILY_MAX_MOBILE_POINTS_XPATH).strip('/')]
 
 	@convert_result_to_uint
 	@go_to_and_return_from(_DASHBOARD_URL)
 	def get_daily_offer_points(self):
 		return [self.browser.get_value(AttributeType.XPath, DAILY_MOBILE_OFFER_POINTS_XPATH), \
-			self.browser.get_value(AttributeType.XPath, DAILY_MOBILE_OFFER_MAX_POINTS_XPATH)]
+			self.browser.get_value(AttributeType.XPath, DAILY_MOBILE_OFFER_MAX_POINTS_XPATH).strip('/')]
 
 	def __str__(self):
 		'''

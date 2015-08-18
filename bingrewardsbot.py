@@ -1,25 +1,28 @@
-from bingrewardsaccount import AccountCredentials, DesktopAccountManager, MobileAccountManager
+from bingrewardsaccount import DesktopAccountManager, MobileAccountManager
 from browser.browser import AttributeType, Browser
-from browser.webdrivermanager.browsertypes import BrowserType
 from randomwordgenerator import randomwordgenerator
 
-class BingRewardsBot:
-	def __init__(self, browser_type, is_mobile = False, sleep_between_searches = 5):
+class DesktopBingRewardsBot:
+	def __init__(self, browser_type, sleep_between_searches = 5):
 		'''
 			@param browser_type
 				BrowserType enum value specifying the type of browser that
 				the user wants to utilize for search automation + points accumulation
 		'''
-		self.browser = Browser(browser_type = browser_type, mobile = is_mobile)
-		self.account_manager = MobileAccountManager(self.browser) if is_mobile else DesktopAccountManager(self.browser)
 		self.sleep_time = sleep_between_searches
+		self._init_account_manager(browser_type)
+
+	def _init_account_manager(self, browser_type):
+		self.browser = Browser(browser_type = browser_type, mobile = False)
+		self.account_manager = DesktopAccountManager(self.browser)
 
 	def finish(self):
 		'''
 			Close the browser, and release all resources.
 		'''
-		self.browser.close()
-		self.browser = None
+		if self.browser:
+			self.browser.close()
+			self.browser = None
 
 	def _perform_random_searches(self, num_searches):
 		'''
@@ -61,16 +64,21 @@ class BingRewardsBot:
 			self._perform_random_searches(num_searches)
 			self.account_manager.sign_out()
 
-def main():
-	# Enter Hotmail/Outlook creds here.
-	creds = []
-	desktop_bot = BingRewardsBot(BrowserType.Chrome)
-	desktop_bot.execute(creds, 30)
-	desktop_bot.finish()
+class MobileBingRewardsBot(DesktopBingRewardsBot):
+	def _init_account_manager(self, browser_type):
+		self.browser_type = browser_type
+		self.account_manager = MobileAccountManager()
 
-	#mobile_bot = BingRewardsBot(BrowserType.Chrome, is_mobile = True)
-	#mobile_bot.execute(creds, 2)
-	#mobile_bot.finish()
+	def execute(self, account_credentials, num_searches):
+		for creds in account_credentials:
+			# Open new browser window.
+			self.account_manager.browser = Browser(browser_type = self.browser_type, mobile = True)
+			self.browser = self.account_manager.browser
 
-if __name__ == '__main__':
-	main()
+			# Sign in, perform searches, and accumulate points.
+			self.account_manager.account_creds = creds
+			self.account_manager.sign_in()
+			self._perform_random_searches(num_searches)
+
+			# Close browser window.
+			self.browser.close()
