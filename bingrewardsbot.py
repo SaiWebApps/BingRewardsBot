@@ -20,9 +20,9 @@ class DesktopBingRewardsBot:
 		'''
 			Close the browser, and release all resources.
 		'''
-		if self.browser:
+		if self.browser.browser:
 			self.browser.close()
-			self.browser = None
+		self.browser = None
 
 	def _perform_random_searches(self, num_searches):
 		'''
