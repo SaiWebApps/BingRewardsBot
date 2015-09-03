@@ -17,5 +17,5 @@ def generate_random_words(n = 1):
 		results = primary.get_n_random_words(n)
 	except:
 		# If unable to read website, then generate n random strings.
-		results = secondary.get_n_random_words()
+		results = backup.get_n_random_words(n)
 	return results if not results or len(results) > 1 else results[0]
