@@ -44,8 +44,8 @@ def get_selenium_webdriver(browser_type, mobile = False):
 
     # If the specified browser type is Firefox, then the executable path is not required
     # since Selenium offers in-built support for the Firefox webdriver.
-    if browser_type == browsertypes.BrowserType.Firefox:
-        return driver_config[browsertypes.SELENIUM_WEBDRIVER]
+    if browser_type.value == browsertypes.BrowserType.Firefox.value:
+        return driver_config[browsertypes.SELENIUM_WEBDRIVER]("", mobile).get_driver()
 
     # For all other browser types, get the path to the webdriver executable that can run
     # on the current platform, and create a Selenium webdriver object that uses this path.
