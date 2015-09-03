@@ -104,8 +104,11 @@ class AbstractAccountManager:
         '''
         account_details = [self.account_creds.email, ' - ', str(self.get_total_num_points()), ' points\n']
         account_details.append('Daily Point Breakdown:\n')
-        daily_offer_points = [str(elem) for elem in self.get_daily_offer_points()]
-        account_details.extend(['\tDaily Offer Points = ', daily_offer_points[0], '/', daily_offer_points[1], '\n'])
+        try:
+            daily_offer_points = '/'.join([str(elem) for elem in self.get_daily_offer_points()])
+        except:
+            daily_offer_points = '0'
+        account_details.extend(['\tDaily Offer Points = ', daily_offer_points, '\n'])
         return ''.join(account_details)
 
 class DesktopAccountManager(AbstractAccountManager):
@@ -158,8 +161,11 @@ class DesktopAccountManager(AbstractAccountManager):
                 Daily PC Points = 15
         '''
         account_details = super().__str__()
-        daily_device_points = [str(elem) for elem in self.get_daily_device_points()]
-        account_details += '\tDaily PC Points = ' + daily_device_points[0] + '/' + daily_device_points[1] + '\n'
+        try:
+            daily_device_points = '/'.join([str(elem) for elem in self.get_daily_device_points()])
+        except:
+            daily_device_points = '0'
+        account_details += '\tDaily PC Points = ' + daily_device_points + '\n'
         return account_details
 
 class MobileAccountManager(AbstractAccountManager):
@@ -188,6 +194,9 @@ class MobileAccountManager(AbstractAccountManager):
                 Daily Mobile Points = 10
         '''
         account_details = super().__str__()
-        daily_device_points = [str(elem) for elem in self.get_daily_device_points()]
-        account_details += '\tDaily Mobile Points = ' + daily_device_points[0] + '/' + daily_device_points[1] + '\n'
+        try:
+            daily_device_points = '/'.join([str(elem) for elem in self.get_daily_device_points()])
+        except:
+            daily_device_points = '0'
+        account_details += '\tDaily Mobile Points = ' + daily_device_points + '\n'
         return account_details
