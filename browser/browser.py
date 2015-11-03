@@ -367,7 +367,9 @@ class Browser:
 
     def close(self):
         '''
-            Close this browser window.
+            @description
+                Close this browser window.
         '''
-        self.browser.quit()
-        self.browser = None # So that we don't use this by accident.
+        if self.browser:
+            self.browser.quit()
+        self.browser = None
