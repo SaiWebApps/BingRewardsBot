@@ -56,6 +56,7 @@ class FirefoxDriver(WebDriver):
                 to spoof a mobile browser's user-agent string.
         '''
         profile = webdriver.FirefoxProfile()
+        profile.set_preference('browser.privatebrowsing.autostart', True)
         if self.mobile:
             profile.set_preference('general.useragent.override', _MOBILE_BROWSER_USER_AGENT)
         return webdriver.Firefox(profile)
@@ -68,6 +69,7 @@ class ChromeDriver(WebDriver):
     def get_driver(self):
         executable_path = self.exec_path
         opts = Options()
+        opts.add_argument('--incognito')
         if self.mobile:
             opts.add_argument('user-agent=' + _MOBILE_BROWSER_USER_AGENT)
         return webdriver.Chrome(self.exec_path, chrome_options = opts)
