@@ -5,21 +5,37 @@ from browser.browser import AttributeType
 _SIGN_IN_URL = 'https://www.bing.com/rewards/signin'
 _DASHBOARD_URL = 'https://www.bing.com/rewards/dashboard'
 
-DAILY_PC_OFFER_POINTS_XPATH = '//*[@id="credits"]/div[2]/span[1]/span'
-DAILY_PC_POINTS_XPATH = '//div[@id="credits"]/div[2]/span[2]/span'
+DAILY_CURRENT_PC_OFFER_POINTS_XPATH = '//*[@id="credits"]/div[2]/span[1]/span'
+DAILY_CURRENT_PC_POINTS_XPATH = '//div[@id="credits"]/div[2]/span[2]/span'
 
-DAILY_MOBILE_OFFER_POINTS_XPATH = '//*[@id="credit-progress"]/div[3]/span[1]'
-DAILY_MOBILE_OFFER_MAX_POINTS_XPATH = '//*[@id="credit-progress"]/div[3]/span[2]'
+DAILY_CURRENT_MOBILE_OFFER_POINTS_XPATH = '//*[@id="credit-progress"]/div[3]/span[1]'
+DAILY_MAX_MOBILE_OFFER_POINTS_XPATH = '//*[@id="credit-progress"]/div[3]/span[2]'
 DAILY_CURRENT_MOBILE_POINTS_XPATH = '//*[@id="credit-progress"]/div[5]/span[1]'
 DAILY_MAX_MOBILE_POINTS_XPATH = '//*[@id="credit-progress"]/div[5]/span[2]'
 
 # Decorators
 def convert_result_to_uint(function):
+    '''
+        @description
+            Convert the result(s) of the specified function to int(s).
+
+        @param function
+            Function whose output is being integer-ized (e.g., ['2','3']
+            will be converted to [2,3])
+
+        @return
+            If function's output is a list, then convert each element
+            to an int. Otherwise, just convert function output as is to int.
+    '''
     def func_wrapper(*args, **kwargs):
         try:
             function_output = function(*args, **kwargs)
+            # If the function result is a list, then de-stringify each
+            # element in the list.
             if (type(function_output) == type([])):
                 result = [int(elem) for elem in function_output]
+            # Otherwise, it's just a single stringified number, so just
+            # convert it back to to an int.
             else:
                 result = int(function_output)
         except:
@@ -28,6 +44,20 @@ def convert_result_to_uint(function):
     return func_wrapper
 
 def go_to_and_return_from(dest_url):
+    '''
+        @description
+            Navigate to the specified url, execute the specified function,
+            and then return to the original page.
+
+        @param dest_url
+            Url to navigate to before executing the function
+
+        @param function
+            Function to execute after navigating to dest_url
+
+        @return
+            The function's output as is
+    '''
     def page_nav_decorator(function):
         def func_wrapper(*args, **kwargs):
             browser = args[0].browser
@@ -44,6 +74,16 @@ def go_to_and_return_from(dest_url):
         return func_wrapper
     return page_nav_decorator
 
+def open_stats_iframe(function):
+    def func_wrapper(*args, **kwargs):
+        args[0].browser.click(AttributeType.Id, 'id_rh')
+        args[0].browser.switch_into_iframe(AttributeType.Id, 'bepfm')
+        function_output = function(*args, **kwargs)
+        args[0].browser.switch_out_of_iframe()
+        return function_output
+    return func_wrapper
+
+# Classes
 class AccountCredentials:
     def __init__(self, email, password):
         self.email = email
@@ -55,6 +95,9 @@ class AbstractAccountManager:
         self.account_creds = account_creds
 
     # Abstract Methods
+    def get_device_class(self):
+        raise NotImplementedError()
+
     def get_total_num_points(self):
         raise NotImplementedError()
 
@@ -67,19 +110,27 @@ class AbstractAccountManager:
     def sign_out(self):
         raise NotImplementedError()
 
-    # Login-related methods
     def _load_login_form(self):
         '''
-            Perform some set of actions to move from the _SIGN_IN_URL to the
-            actual sign in form.
+            @description
+                Perform some set of actions to move from the _SIGN_IN_URL to the
+                actual sign in form.
         '''
         pass
 
     def open_dashboard(self):
+        '''
+            @description
+                Navigate to the user's BingRewards dashboard page.
+                Assumes that the user is already signed in.
+        '''
         self.browser.open(_DASHBOARD_URL)
 
     def sign_in(self):
         '''
+            @description
+                Sign in to the specified Bing Rewards account.
+
             @return
                 True if sign-in was successful, False otherwise
         '''
@@ -95,20 +146,24 @@ class AbstractAccountManager:
         )
         return (not self.browser.contains_element(AttributeType.Id, 'idTd_Tile_ErrorMsg_Login'))
 
-
     def __str__(self):
         '''
             abc@def.com - 2200 points
             Daily Point Breakdown:
-                Daily Offer Points = 5
+                Daily [PC/Mobile/DeviceClass] Points = 15/15
+                Daily Offer Points = 5/5
         '''
-        account_details = [self.account_creds.email, ' - ', str(self.get_total_num_points()), ' points\n']
+        account_details = [self.account_creds.email, ' - ', str(self.get_total_num_points()), \
+            ' points\n']
         account_details.append('Daily Point Breakdown:\n')
-        try:
-            daily_offer_points = '/'.join([str(elem) for elem in self.get_daily_offer_points()])
-        except:
-            daily_offer_points = '0'
+
+        daily_device_points =   '/'.join([str(elem) for elem in self.get_daily_device_points()])
+        account_details.extend(['\tDaily ', self.get_device_class(), ' Points = ', \
+            daily_device_points, '\n'])
+
+        daily_offer_points = '/'.join([str(elem) for elem in self.get_daily_offer_points()])
         account_details.extend(['\tDaily Offer Points = ', daily_offer_points, '\n'])
+        
         return ''.join(account_details)
 
 class DesktopAccountManager(AbstractAccountManager):
@@ -123,52 +178,52 @@ class DesktopAccountManager(AbstractAccountManager):
         self.browser.click(AttributeType.Id, 'id_s')
         self.browser.click(AttributeType.ClassName, 'id_link_text')
 
-    def sign_out(self):
-        self.browser.click(AttributeType.Id, 'id_l')
-        self.browser.sleep(5)
-        self.browser.click(AttributeType.XPath, '//*[@id="b_idProviders"]/li/a')
-        self.browser.sleep(5)
-        return self.browser.get_value(AttributeType.Id, 'id_n').strip() != ''
+    @convert_result_to_uint
+    @open_stats_iframe
+    def _get_daily_statistic(self, target_xpath):
+        '''
+            @description
+                Navigate to the Bing Rewards dashboard, open the points flyout,
+                and get the specified daily statistic.
+
+            @param target_xpath
+                XPath of the target daily stat element
+
+            @return
+                A 2-element list, where the first element is the current get_value
+                of the daily stat, and the second is the max possible value for that 
+                stat. If we are unable to read either value, then return [0,0].
+        '''
+        output = [0, 0] # [current, max]
+        daily_points = self.browser.get_value(AttributeType.XPath, target_xpath)
+        if daily_points:
+            output = daily_points.split('/')
+        return output
+
+    def get_device_class(self):
+        return 'PC'
 
     @convert_result_to_uint
-    @go_to_and_return_from(_DASHBOARD_URL)
     def get_total_num_points(self):
         return self.browser.get_value(AttributeType.Id, 'id_rc')
 
-    @convert_result_to_uint
-    @go_to_and_return_from(_DASHBOARD_URL)
     def get_daily_device_points(self):
-        self.browser.click(AttributeType.Id, 'id_rh')
-        self.browser.switch_into_iframe(AttributeType.Id, 'bepfm')
-        daily_pc_points = self.browser.get_value(AttributeType.XPath, DAILY_PC_POINTS_XPATH)
-        self.browser.switch_out_of_iframe()
-        return daily_pc_points.split('/')
+        return self._get_daily_statistic(DAILY_CURRENT_PC_POINTS_XPATH)
 
-    @convert_result_to_uint
-    @go_to_and_return_from(_DASHBOARD_URL)
     def get_daily_offer_points(self):
-        self.browser.click(AttributeType.Id, 'id_rh')
-        self.browser.switch_into_iframe(AttributeType.Id, 'bepfm')
-        daily_offer_points = self.browser.get_value(AttributeType.XPath, DAILY_PC_OFFER_POINTS_XPATH)
-        self.browser.switch_out_of_iframe()
-        return daily_offer_points.split('/')
+        return self._get_daily_statistic(DAILY_CURRENT_PC_OFFER_POINTS_XPATH)
 
-    def __str__(self):
-        '''
-            abc@def.com - 2200 points
-            Daily Point Breakdown:
-                Daily Offer Points = 5
-                Daily PC Points = 15
-        '''
-        account_details = super().__str__()
-        try:
-            daily_device_points = '/'.join([str(elem) for elem in self.get_daily_device_points()])
-        except:
-            daily_device_points = '0'
-        account_details += '\tDaily PC Points = ' + daily_device_points + '\n'
-        return account_details
+    def sign_out(self):
+        self.browser.click(AttributeType.Id, 'id_n')
+        self.browser.sleep(5)
+        self.browser.click(AttributeType.XPath, '//*[@id="b_idProviders"]/li/a/span[2]')
+        self.browser.sleep(5)
+        return self.browser.get_value(AttributeType.Id, 'id_n').strip() != ''
 
 class MobileAccountManager(AbstractAccountManager):
+    def get_device_class(self):
+        return 'Mobile'
+
     @convert_result_to_uint
     @go_to_and_return_from(_DASHBOARD_URL)
     def get_total_num_points(self):
@@ -183,20 +238,5 @@ class MobileAccountManager(AbstractAccountManager):
     @convert_result_to_uint
     @go_to_and_return_from(_DASHBOARD_URL)
     def get_daily_offer_points(self):
-        return [self.browser.get_value(AttributeType.XPath, DAILY_MOBILE_OFFER_POINTS_XPATH), \
-            self.browser.get_value(AttributeType.XPath, DAILY_MOBILE_OFFER_MAX_POINTS_XPATH).strip('/')]
-
-    def __str__(self):
-        '''
-            abc@def.com - 2200 points
-            Daily Point Breakdown:
-                Daily Offer Points = 5
-                Daily Mobile Points = 10
-        '''
-        account_details = super().__str__()
-        try:
-            daily_device_points = '/'.join([str(elem) for elem in self.get_daily_device_points()])
-        except:
-            daily_device_points = '0'
-        account_details += '\tDaily Mobile Points = ' + daily_device_points + '\n'
-        return account_details
+        return [self.browser.get_value(AttributeType.XPath, DAILY_CURRENT_MOBILE_OFFER_POINTS_XPATH), \
+            self.browser.get_value(AttributeType.XPath, DAILY_MAX_MOBILE_OFFER_POINTS_XPATH).strip('/')]
