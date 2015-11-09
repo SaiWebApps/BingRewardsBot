@@ -278,6 +278,7 @@ class Browser:
                 # Find each field, and type the specified message into it.
                 message = field_attr_values[field_attr_value]
                 status = status and self.type(field_attr_type_enum, field_attr_value, message)
+                self.sleep(1)
 
         if field_attr_type_enum and field_attr_value:
             status = status and self.submit(field_attr_type_enum, field_attr_value)
