@@ -37,12 +37,11 @@ class DesktopBingRewardsBot:
     def _perform_random_searches(self, num_searches):
         '''
             @description
-                Perform the specified number of Bing searches, if
-                we can still accumulate points for the day.
-                In the worst-case, if we can't load any stats for the
-                given account, then we will still perform the specified 
-                number of searches. But we cannot guarantee the accumulation
-                of the appropriate number of points.
+                Perform the specified number of Bing searches, if we can still
+                accumulate points for the day.
+                In the worst-case, if we can't load any stats for the given account,
+                then we will still perform the specified number of searches. But we
+                cannot guarantee the accumulation of the appropriate number of points.
 
             @param num_searches
                 (Required) 
@@ -81,7 +80,8 @@ class DesktopBingRewardsBot:
             # so that Bing can't detect their automated nature.
             random_queries = randomwordgenerator.generate_random_words(num_searches)
             for query in random_queries:
-                self.browser.type_and_submit(AttributeType.Name, 'q', query, clear_after_submit = True)
+                self.browser.type_and_submit(AttributeType.Name, 'q', query, \
+                    clear_after_submit = True)
                 self.browser.sleep(self.sleep_time)
 
             # Try to read/capture the number of points accumulated today.
@@ -100,13 +100,18 @@ class DesktopBingRewardsBot:
             @param num_searches
                 (Required)
                 Integer number of Bing searches that the user wants to automate.
+
+            @return
+                True if specified number of searches were performed successfully,
+                False otherwise.
         '''
         try:
             self._perform_random_searches(num_searches)
         except:
-            pass
+            return False
         finally:
             print(self.account_manager)
+            return True
 
     def execute(self, account_credentials, num_searches):
         '''
