@@ -21,5 +21,7 @@ Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), thi
 python bingrewardsbot.py
 
 ## TODO
-* ~~Add more comments.~~
 * ~~For each account, display list of points before and after searches to confirm script's success.~~
+* Multi-threading - Execute {account 1, account 2, etc.} searches in parallel.
+* Schedule automatic execution.
+* GUI front-end
