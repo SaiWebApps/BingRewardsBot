@@ -9,16 +9,25 @@ You can find out more about Bing Rewards <a href="http://www.bing.com/explore/re
 
 #### What is the purpose of this application?
 <u>In 3 words - Automate Bing searches.</u> <br>
-To accumulate Bing Rewards points, one must perform 30 desktop-based and 20 mobile-based Bing searches; this will yield a total of 25 Bing Rewards points per day. <br>
+To accumulate Bing Rewards points, one must perform 30 desktop-based and 20 mobile-based Bing searches per day; this will yield a total of 25 Bing Rewards points per day. <br>
 Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), this could be difficult, whether due to forgetfulness or habit. So, this script will allow them to easily accumulate those points on days where they've neglected to perform the necessary amount of Bing searches.
 
 ## Prerequisites
-* A Windows, Linux, or Mac OSX desktop/laptop
 * <a href="https://www.python.org/ftp/python/3.4.3/python-3.4.3.msi">Python 3.4</a>
 * requests, selenium - After installing python, you can install these via "pip install -r requirements.txt". We strongly recommend executing this command and installing these modules within a Python virtual environment (virtualenv).
 
+## Supported Browsers
+### WINDOWS
+
+|         | Firefox   | Chrome    | Headless (PhantomJS) |
+| ------- | --------- | --------- | -------------------- |
+| Desktop | &#9745;   | &#9745;   | &#9745;              |
+| Mobile  | &#9745;   | &#9745;   | &#9745;              |
+
+### LINUX
+
 ## How To Execute
-python bingrewardsbot.py
+python driver.py
 
 ## TODO
 * ~~For each account, display list of points before and after searches to confirm script's success.~~
