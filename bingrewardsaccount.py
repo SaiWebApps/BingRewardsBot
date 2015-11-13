@@ -203,6 +203,15 @@ class DesktopAccountManager(AbstractAccountManager):
     def get_device_class(self):
         return 'PC'
 
+    @open_stats_iframe
+    def accumulate_special_offer_points(self):
+        base_url = self.browser.get_current_url()
+        special_offers = self.browser.get_child_attributes(AttributeType.Id, 'offers', 'href')
+        for link in special_offers:
+            self.browser.open(link)
+        if self.browser.get_current_url() != base_url:
+            self.browser.open(base_url)
+
     @convert_result_to_uint
     def get_total_num_points(self):
         return self.browser.get_value(AttributeType.Id, 'id_rc')
