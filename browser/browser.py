@@ -135,8 +135,12 @@ class Browser:
         '''
         target_elements = []
         if self.__try_finding_element(attribute_type_enum, attribute_value, wait_condition, num_retries):
-            target_elements = self.browser.find_elements(attribute_type, attribute_value)
+            target_elements = self.browser.find_elements(attribute_type_enum.value, attribute_value)
         return target_elements
+
+    def _get_child_elements(self, parent_attribute_type_enum, parent_attribute_value):
+        parent_element = self._get_element(parent_attribute_type_enum, parent_attribute_value)
+        return parent_element.find_elements(AttributeType.XPath.value, './/*') if parent_element else []
 
     def open(self, url):
         '''
@@ -148,6 +152,7 @@ class Browser:
                 False otherwise.
         '''
         self.browser.get(url)
+        self.sleep(_WAIT_TIME_SECONDS)
         return self.browser.current_url == url
 
     def click(self, attribute_type_enum, attribute_value):
@@ -317,7 +322,7 @@ class Browser:
             and attribute_value = "example".
         '''
         target_elements = self._get_elements(attribute_type_enum, attribute_value)
-        return [elem.text for elem in target_elements]
+        return [elem.text.encode('ascii', 'ignore') for elem in target_elements]
 
     def get_target_attribute(self, attribute_type_enum, attribute_value, target_attribute):
         target_elem = self._get_element(attribute_type_enum, attribute_value)
@@ -326,6 +331,14 @@ class Browser:
     def get_all_target_attributes(self, attribute_type_enum, attribute_value, target_attribute):
         target_elements = self._get_elements(attribute_type_enum, attribute_value)
         return [elem.get_attribute(target_attribute) for elem in target_elements]
+
+    def get_child_values(self, parent_attribute_type_enum, parent_attribute_value):
+        return [element.text.encode('ascii', 'ignore') for element in self._get_child_elements(parent_attribute_type_enum, parent_attribute_value)]
+
+    def get_child_attributes(self, parent_attribute_type_enum, parent_attribute_value, target_attribute):
+        child_elements = self._get_child_elements(parent_attribute_type_enum, parent_attribute_value)
+        child_attributes = [element.get_attribute(target_attribute) for element in child_elements]
+        return [elem for elem in child_attributes if elem]
 
     def get_current_url(self):
         '''
