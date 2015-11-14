@@ -4,6 +4,7 @@ from browser.browser import AttributeType
 # Constants
 _SIGN_IN_URL = 'https://www.bing.com/rewards/signin'
 _DASHBOARD_URL = 'https://www.bing.com/rewards/dashboard'
+_MOBILE_SPECIAL_OFFERS_URL = 'https://www.bing.com/rewards/dashboard?showOffers=1'
 
 DAILY_CURRENT_PC_OFFER_POINTS_XPATH = '//*[@id="credits"]/div[2]/span[1]/span'
 DAILY_CURRENT_PC_POINTS_XPATH = '//div[@id="credits"]/div[2]/span[2]/span'
@@ -12,6 +13,7 @@ DAILY_CURRENT_MOBILE_OFFER_POINTS_XPATH = '//*[@id="credit-progress"]/div[3]/spa
 DAILY_MAX_MOBILE_OFFER_POINTS_XPATH = '//*[@id="credit-progress"]/div[3]/span[2]'
 DAILY_CURRENT_MOBILE_POINTS_XPATH = '//*[@id="credit-progress"]/div[5]/span[1]'
 DAILY_MAX_MOBILE_POINTS_XPATH = '//*[@id="credit-progress"]/div[5]/span[2]'
+SPECIAL_OFFERS_PARENT_XPATH = '//*[@id="activities"]/div[2]/div[1]'
 
 # Decorators
 def convert_result_to_uint(function):
@@ -97,6 +99,17 @@ class AbstractAccountManager:
     # Abstract Methods
     def get_device_class(self):
         raise NotImplementedError()
+
+    def get_special_offer_links(self):
+        raise NotImplementedError()
+
+    def accumulate_special_offer_points(self):
+        special_offers = self.get_special_offer_links()
+        base_url = self.browser.get_current_url()
+        for link in special_offers:
+            self.browser.open(link)
+        if self.browser.get_current_url() != base_url:
+            self.browser.open(base_url)
 
     def get_total_num_points(self):
         raise NotImplementedError()
@@ -204,13 +217,8 @@ class DesktopAccountManager(AbstractAccountManager):
         return 'PC'
 
     @open_stats_iframe
-    def accumulate_special_offer_points(self):
-        base_url = self.browser.get_current_url()
-        special_offers = self.browser.get_child_attributes(AttributeType.Id, 'offers', 'href')
-        for link in special_offers:
-            self.browser.open(link)
-        if self.browser.get_current_url() != base_url:
-            self.browser.open(base_url)
+    def get_special_offer_links(self):
+        return self.browser.get_child_attributes(AttributeType.Id, 'offers', 'href')
 
     @convert_result_to_uint
     def get_total_num_points(self):
@@ -232,6 +240,10 @@ class DesktopAccountManager(AbstractAccountManager):
 class MobileAccountManager(AbstractAccountManager):
     def get_device_class(self):
         return 'Mobile'
+
+    @go_to_and_return_from(_MOBILE_SPECIAL_OFFERS_URL)
+    def get_special_offer_links(self):
+        return self.browser.get_child_attributes(AttributeType.XPath, SPECIAL_OFFERS_PARENT_XPATH, 'href')[:-3]
 
     @convert_result_to_uint
     @go_to_and_return_from(_DASHBOARD_URL)

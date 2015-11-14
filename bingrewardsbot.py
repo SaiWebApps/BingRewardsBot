@@ -89,7 +89,7 @@ class DesktopBingRewardsBot:
 
         self.account_manager.open_dashboard()
 
-    def _safe_perform_random_searches(self, num_searches):
+    def _safe_accumulate_points(self, num_searches):
         '''
             @description
                 Wrapper function around _perform_random_searches.
@@ -107,6 +107,7 @@ class DesktopBingRewardsBot:
         '''
         try:
             self._perform_random_searches(num_searches)
+            self.account_manager.accumulate_special_offer_points()
         except:
             return False
         finally:
@@ -135,7 +136,7 @@ class DesktopBingRewardsBot:
         for creds in account_credentials:
             self.account_manager.account_creds = creds
             self.account_manager.sign_in()
-            self._safe_perform_random_searches(num_searches)
+            self._safe_accumulate_points(num_searches)
             self.account_manager.sign_out()
 
     def finish(self):
@@ -173,7 +174,7 @@ class MobileBingRewardsBot(DesktopBingRewardsBot):
             # Sign in, perform searches, and accumulate points.
             self.account_manager.account_creds = creds
             self.account_manager.sign_in()
-            self._safe_perform_random_searches(num_searches)
+            self._safe_accumulate_points(num_searches)
 
             # Close browser window.
             self.browser.close()

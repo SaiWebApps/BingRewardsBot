@@ -31,6 +31,9 @@ python driver.py
 
 ## TODO
 * ~~For each account, display list of points before and after searches to confirm script's success.~~
+* ~~Accumulate points successfully on Windows for Firefox, Chrome, and Headless/PhantomJS browsers.~~
+* Accumulate points successfully on Linux for Firefox, Chrome, and Headless/PhantomJS browsers.
+* ~~Accumulate special offer points.~~
 * Multi-threading - Execute {account 1, account 2, etc.} searches in parallel.
 * Schedule automatic execution.
 * GUI front-end
