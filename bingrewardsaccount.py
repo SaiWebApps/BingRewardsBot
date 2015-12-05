@@ -8,6 +8,7 @@ _MOBILE_SPECIAL_OFFERS_URL = 'https://www.bing.com/rewards/dashboard?showOffers=
 
 DAILY_CURRENT_PC_OFFER_POINTS_XPATH = '//*[@id="credits"]/div[2]/span[1]/span'
 DAILY_CURRENT_PC_POINTS_XPATH = '//div[@id="credits"]/div[2]/span[2]/span'
+SPECIAL_OFFERS_PC_PARENT_XPATH = '//*[@id="dashboard_wrapper"]/div[1]/div[1]/ul'
 
 DAILY_CURRENT_MOBILE_OFFER_POINTS_XPATH = '//*[@id="credit-progress"]/div[3]/span[1]'
 DAILY_MAX_MOBILE_OFFER_POINTS_XPATH = '//*[@id="credit-progress"]/div[3]/span[2]'
@@ -78,7 +79,7 @@ def go_to_and_return_from(dest_url):
 
 def open_stats_iframe(function):
     def func_wrapper(*args, **kwargs):
-        args[0].browser.click(AttributeType.Id, 'id_rh')
+        args[0].browser.click(AttributeType.Id, 'id_rc')
         args[0].browser.switch_into_iframe(AttributeType.Id, 'bepfm')
         function_output = function(*args, **kwargs)
         args[0].browser.switch_out_of_iframe()
@@ -120,9 +121,6 @@ class AbstractAccountManager:
     def get_daily_offer_points(self):
         raise NotImplementedError()
 
-    def sign_out(self):
-        raise NotImplementedError()
-
     def _load_login_form(self):
         '''
             @description
@@ -158,6 +156,9 @@ class AbstractAccountManager:
             }
         )
         return (not self.browser.contains_element(AttributeType.Id, 'idTd_Tile_ErrorMsg_Login'))
+
+    def sign_out(self):
+        pass
 
     def __str__(self):
         '''
@@ -216,9 +217,10 @@ class DesktopAccountManager(AbstractAccountManager):
     def get_device_class(self):
         return 'PC'
 
-    @open_stats_iframe
+    @go_to_and_return_from(_DASHBOARD_URL)
     def get_special_offer_links(self):
-        return self.browser.get_child_attributes(AttributeType.Id, 'offers', 'href')
+        return self.browser.get_child_attributes(AttributeType.XPath, \
+            SPECIAL_OFFERS_PC_PARENT_XPATH, 'href', 2)
 
     @convert_result_to_uint
     def get_total_num_points(self):

@@ -138,9 +138,10 @@ class Browser:
             target_elements = self.browser.find_elements(attribute_type_enum.value, attribute_value)
         return target_elements
 
-    def _get_child_elements(self, parent_attribute_type_enum, parent_attribute_value):
+    def _get_child_elements(self, parent_attribute_type_enum, parent_attribute_value, num_levels):
         parent_element = self._get_element(parent_attribute_type_enum, parent_attribute_value)
-        return parent_element.find_elements(AttributeType.XPath.value, './/*') if parent_element else []
+        children_xpath = '.' + ('//*' * num_levels)
+        return parent_element.find_elements(AttributeType.XPath.value, children_xpath) if parent_element else []
 
     def open(self, url):
         '''
@@ -332,11 +333,11 @@ class Browser:
         target_elements = self._get_elements(attribute_type_enum, attribute_value)
         return [elem.get_attribute(target_attribute) for elem in target_elements]
 
-    def get_child_values(self, parent_attribute_type_enum, parent_attribute_value):
-        return [element.text.encode('ascii', 'ignore') for element in self._get_child_elements(parent_attribute_type_enum, parent_attribute_value)]
+    def get_child_values(self, parent_attribute_type_enum, parent_attribute_value, num_levels = 1):
+        return [element.text.encode('ascii', 'ignore') for element in self._get_child_elements(parent_attribute_type_enum, parent_attribute_value, num_levels)]
 
-    def get_child_attributes(self, parent_attribute_type_enum, parent_attribute_value, target_attribute):
-        child_elements = self._get_child_elements(parent_attribute_type_enum, parent_attribute_value)
+    def get_child_attributes(self, parent_attribute_type_enum, parent_attribute_value, target_attribute, num_levels = 1):
+        child_elements = self._get_child_elements(parent_attribute_type_enum, parent_attribute_value, num_levels)
         child_attributes = [element.get_attribute(target_attribute) for element in child_elements]
         return [elem for elem in child_attributes if elem]
 

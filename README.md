@@ -34,6 +34,5 @@ python driver.py
 * ~~Accumulate points successfully on Windows for Firefox, Chrome, and Headless/PhantomJS browsers.~~
 * Accumulate points successfully on Linux for Firefox, Chrome, and Headless/PhantomJS browsers.
 * ~~Accumulate special offer points.~~
-* Multi-threading - Execute {account 1, account 2, etc.} searches in parallel.
+* ~~Multi-threading - Execute {account 1, account 2, etc.} searches in parallel.~~
 * Schedule automatic execution.
-* GUI front-end
