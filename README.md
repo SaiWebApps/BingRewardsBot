@@ -24,15 +24,12 @@ Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), thi
 | Desktop | &#9745;   | &#9745;   | &#9745;              |
 | Mobile  | &#9745;   | &#9745;   | &#9745;              |
 
-### LINUX
-
 ## How To Execute
 python driver.py
 
 ## TODO
 * ~~For each account, display list of points before and after searches to confirm script's success.~~
 * ~~Accumulate points successfully on Windows for Firefox, Chrome, and Headless/PhantomJS browsers.~~
-* Accumulate points successfully on Linux for Firefox, Chrome, and Headless/PhantomJS browsers.
 * ~~Accumulate special offer points.~~
 * ~~Multi-threading - Execute {account 1, account 2, etc.} searches in parallel.~~
-* Schedule automatic execution.
+* Pass in account credentials to driver.py via command-line (raw-args, JSON/XML file, etc.).
