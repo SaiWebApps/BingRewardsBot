@@ -1,5 +1,7 @@
 import enum
+
 from browser.browser import AttributeType
+from credentialsprocessor import AccountCredentials
 
 # Constants
 _SIGN_IN_URL = 'https://www.bing.com/rewards/signin'
@@ -87,11 +89,6 @@ def open_stats_iframe(function):
     return func_wrapper
 
 # Classes
-class AccountCredentials:
-    def __init__(self, email, password):
-        self.email = email
-        self.password = password
-
 class AbstractAccountManager:
     def __init__(self, browser = None, account_creds = None):
         self.browser = browser
