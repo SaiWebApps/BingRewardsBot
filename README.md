@@ -24,12 +24,54 @@ Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), thi
 | Desktop | &#9745;   | &#9745;   | &#9745;              |
 | Mobile  | &#9745;   | &#9745;   | &#9745;              |
 
-## How To Execute
-python driver.py
+## Usage
+usage: driver.py [-h] -f FILENAME
+
+Meet daily Bing Rewards desktop and mobile search quota.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f FILENAME, --filename FILENAME
+                        Name of JSON file with Bing Rewards account
+                        credentials
+
+### To create the JSON file ###
+usage: credentialsprocessor.py [-h] [-f FILENAME] [-e EMAIL_ADDRESSES]
+                               [-p PASSWORDS]
+
+Process Bing-Rewards accounts' credentials
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f FILENAME, --filename FILENAME
+                        Name of the JSON file that the credentials are/will be
+                        stored in.
+  -e EMAIL_ADDRESSES, --email_addresses EMAIL_ADDRESSES
+                        Comma-separated list of email addresses.
+  -p PASSWORDS, --passwords PASSWORDS
+                        Comma-separated list of passwords corresponding to
+                        each email address specified with "-e".
+
+### Example Credentials JSON file ###
+credentials.json
+
+```json
+[
+	{
+		"email" : "EMAIL1",
+		"password": "PASSWORD1"
+	},
+	{
+		"email" : "EMAIL2",
+		"password": "PASSWORD2"
+	},
+	....
+]
+```
 
 ## TODO
 * ~~For each account, display list of points before and after searches to confirm script's success.~~
 * ~~Accumulate points successfully on Windows for Firefox, Chrome, and Headless/PhantomJS browsers.~~
 * ~~Accumulate special offer points.~~
 * ~~Multi-threading - Execute {account 1, account 2, etc.} searches in parallel.~~
-* Pass in account credentials to driver.py via command-line (raw-args, JSON/XML file, etc.).
+* ~~Pass in account credentials to driver.py via command-line (raw-args, JSON/XML file, etc.).~~
