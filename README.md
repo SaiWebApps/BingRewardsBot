@@ -24,6 +24,12 @@ Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), thi
 | Desktop | &#9745;   | &#9745;   | &#9745;              |
 | Mobile  | &#9745;   | &#9745;   | &#9745;              |
 
+### LINUX
+|         | Firefox   | Chrome    | Headless (PhantomJS) |
+| ------- | --------- | --------- | -------------------- |
+| Desktop | &#9745;   |           |                      |
+| Mobile  | &#9745;   |           |                      |
+
 ## Usage
 usage: driver.py [-h] -f FILENAME
 
