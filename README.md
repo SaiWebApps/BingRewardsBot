@@ -27,8 +27,8 @@ Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), thi
 ### LINUX
 |         | Firefox   | Chrome    | Headless (PhantomJS) |
 | ------- | --------- | --------- | -------------------- |
-| Desktop | &#9745;   |           |                      |
-| Mobile  | &#9745;   |           |                      |
+| Desktop | &#9745;   |           | &#9745;              |
+| Mobile  | &#9745;   |           | &#9745;              |
 
 ## Usage
 usage: driver.py [-h] -f FILENAME

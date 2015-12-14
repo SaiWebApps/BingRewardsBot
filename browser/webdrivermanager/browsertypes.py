@@ -103,5 +103,6 @@ WEBDRIVER_CONFIG = {
     BrowserType.PhantomJS.value: {
         SELENIUM_WEBDRIVER: PhantomJSDriver,
         'win32': 'webdrivers/phantomjsdriver.exe',
+        'linux': 'webdrivers/phantomjs'
     }
 }
