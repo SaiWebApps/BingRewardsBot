@@ -40,18 +40,6 @@ class AccountCredentials:
         '''
         return json.dumps(self.to_dict(), sort_keys = True, indent = 4, separators = (',', ':'))
 
-    def print_to_json_file(self, filename):
-        '''
-            @description
-            Similar to __str__, except instead of returning a JSON string, we are writing the
-            string to the specified file.
-
-            @param filename
-            Name of the file to which we are writing the JSON string of this object.
-        '''
-        with open(filename, 'w') as json_file_ptr:
-            json.dump(self.to_dict(), json_file_ptr, sort_keys = True, indent = 4, separators = (',', ':'))
-
 class AccountCredentialsCollection:
     def __init__(self, email_list, password_list):
         '''
@@ -86,15 +74,3 @@ class AccountCredentialsCollection:
             ]
         '''
         return json.dumps(self.to_collection_of_dicts(), sort_keys = True, indent = 4, separators = (',', ':'))
-
-    def print_to_json_file(self, filename):
-        '''
-            @description
-            Similar to __str__, except instead of returning a JSON string, we are writing the
-            string to the specified file.
-
-            @param filename
-            Name of the file to which we are writing the JSON string of this object.
-        '''
-        with open(filename, 'w') as json_file_ptr: 
-            json.dump(self.to_collection_of_dicts(), json_file_ptr, sort_keys = True, indent = 4, separators = (',', ':'))

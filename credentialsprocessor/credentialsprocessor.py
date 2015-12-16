@@ -42,7 +42,8 @@ def save_credentials(filename, email_addresses, passwords, delimiter = ','):
     email_address_list = [addr.strip() for addr in email_addresses.split(delimiter)]
     password_list = [p.strip() for p in passwords.split(delimiter)]
     creds_collection = accountcredentialsmodels.AccountCredentialsCollection(email_address_list, password_list)
-    creds_collection.print_to_json_file(filename)
+    with open(filename, 'w') as json_file_ptr:
+        json_file_ptr.write(str(creds_collection))
 
 # Main Method
 def main():
