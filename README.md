@@ -31,49 +31,24 @@ Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), thi
 | Mobile  | &#9745;   |           | &#9745;              |
 
 ## Usage
-usage: driver.py [-h] -f FILENAME
+usage: driver.py [-h] -f FILENAME [-e EMAIL_ADDRESSES]
 
-Meet daily Bing Rewards desktop and mobile search quota.
+Accumulate daily Bing Rewards desktop and mobile points.
 
 optional arguments:
   -h, --help            show this help message and exit
   -f FILENAME, --filename FILENAME
                         Name of JSON file with Bing Rewards account
-                        credentials
-
-### To create the JSON file ###
-usage: credentialsprocessor.py [-h] [-f FILENAME] [-e EMAIL_ADDRESSES]
-                               [-p PASSWORDS]
-
-Process Bing-Rewards accounts' credentials
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -f FILENAME, --filename FILENAME
-                        Name of the JSON file that the credentials are/will be
-                        stored in.
+                        credentials; if it does not exist, specify alongside
+                        "-e" to create.
   -e EMAIL_ADDRESSES, --email_addresses EMAIL_ADDRESSES
-                        Comma-separated list of email addresses.
-  -p PASSWORDS, --passwords PASSWORDS
-                        Comma-separated list of passwords corresponding to
-                        each email address specified with "-e".
+                        Comma-separated Bing Rewards accounts' email
+                        addresses; will be added to credentials JSON file if
+                        it already exists but will create and add to a new
+                        JSON file if it doesn't.
 
-### Example Credentials JSON file ###
-credentials.json
-
-```json
-[
-	{
-		"email" : "EMAIL1",
-		"password": "PASSWORD1"
-	},
-	{
-		"email" : "EMAIL2",
-		"password": "PASSWORD2"
-	},
-	....
-]
-```
+If the "-e" flag is specified, driver.py will prompt for a password for each of the provided email accounts.
+The given email addresses and passwords will then either be appended to the specified JSON file name if it already exists or written to a new JSON file with the given filename if it doesn't.
 
 ## TODO
 * ~~For each account, display list of points before and after searches to confirm script's success.~~
@@ -81,5 +56,5 @@ credentials.json
 * ~~Accumulate special offer points.~~
 * ~~Multi-threading - Execute {account 1, account 2, etc.} searches in parallel.~~
 * ~~Pass in account credentials to driver.py via command-line (raw-args, JSON/XML file, etc.).~~
-* Encrypt passwords in JSON file(s) created by credentialsprocessor module.
+* ~~Encrypt passwords in JSON file(s) created by credentialsprocessor module.~~
 * Create GUI for adding and saving account credentials.

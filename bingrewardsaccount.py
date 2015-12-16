@@ -147,7 +147,7 @@ class AbstractAccountManager:
             {
                 AttributeType.Name: {
                     'loginfmt': self.account_creds.email,
-                    'passwd': self.account_creds.password
+                    'passwd': str(self.account_creds.password)
                 }
             }
         )
