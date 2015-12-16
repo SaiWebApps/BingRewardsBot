@@ -120,7 +120,7 @@ def process_credentials(filename):
         password_list = [json_obj['password'] for json_obj in json_credentials]
         return AccountCredentialsCollection(email_list, password_list)
 
-def save_credentials(filename, email_addresses, passwords):
+def save_credentials(filename, email_addresses, passwords, delimiter = ','):
     '''
         @description
         Save the given set of credentials into an AccountCredentialsCollection object, which will
@@ -134,8 +134,13 @@ def save_credentials(filename, email_addresses, passwords):
         The account credentials information for a set of Bing-Rewards accounts; will be saved to
         an AccountCredentialsCollection object, which will in turn be written to a JSON file
         called filename.
+
+        @param delimiter
+        The separator between email addresses and passwords (e.g., a comma).
     '''
-    creds_collection = AccountCredentialsCollection(email_addresses.split(','), passwords.split(','))
+    email_address_list = [addr.strip() for addr in email_addresses.split(delimiter)]
+    password_list = [p.strip() for p in passwords.split(delimiter)]
+    creds_collection = AccountCredentialsCollection(email_address_list, password_list)
     creds_collection.print_to_json_file(filename)
 
 # Main Method
