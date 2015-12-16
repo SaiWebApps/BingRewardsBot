@@ -81,3 +81,5 @@ credentials.json
 * ~~Accumulate special offer points.~~
 * ~~Multi-threading - Execute {account 1, account 2, etc.} searches in parallel.~~
 * ~~Pass in account credentials to driver.py via command-line (raw-args, JSON/XML file, etc.).~~
+* Encrypt passwords in JSON file(s) created by credentialsprocessor module.
+* Create GUI for adding and saving account credentials.
