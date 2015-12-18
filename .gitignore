@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# JSON extensions - Store credentials
+*.json
+
 # Distribution / packaging
 .Python
 env/
@@ -56,6 +59,3 @@ docs/_build/
 
 # PyBuilder
 target/
-
-# JSON files - Most likely account credentials
-.json
