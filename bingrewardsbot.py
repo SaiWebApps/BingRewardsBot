@@ -66,6 +66,19 @@ class DesktopBingRewardsBot(Thread):
         if self.browser:
             self.browser.close()
 
+    def _execute_random_searches(self):
+        # Normal Case: Generate "num_searches" random words, and perform
+        # a Bing search using each term. Wait N seconds between searches,
+        # so that Bing can't detect their automated nature.
+        random_queries = randomwordgenerator.generate_random_words(self.num_searches)
+        for query in random_queries:
+            self.browser.type_and_submit(AttributeType.Name, 'q', query, \
+                clear_after_submit = True)
+            self.browser.sleep(self.sleep_time_between_searches)
+    
+    def _unable_to_read_points(self, current, target, maximum):
+        return current == 0 or target == 0 or maximum == 0
+
     def perform_random_searches(self):
         '''
             @description
@@ -90,32 +103,20 @@ class DesktopBingRewardsBot(Thread):
         current_num_retries = 0
         MAX_NUM_RETRIES = 5
 
-        while current_device_points < target_device_points:
-            # Exit loop if we've already accumulated the maximum possible 
-            # number of points for the day.
-            if current_device_points >= max_device_points:
-                break
-
+        while current_device_points < target_device_points and target_device_points < max_device_points and \
+                current_num_retries < MAX_NUM_RETRIES:
             # If we can't read the current number of points or the maximum
             # possible number of points, then increment the number of retries.
-            if current_device_points == 0 or max_device_points == 0:
+            if self._unable_to_read_points(current_device_points, target_device_points, max_device_points):
                 current_num_retries = current_num_retries + 1
-            # If we've hit the maximum number of retries, then break.
-            if current_num_retries >= MAX_NUM_RETRIES:
-                break
 
-            # Normal Case: Generate "num_searches" random words, and perform
-            # a Bing search using each term. Wait N seconds between searches,
-            # so that Bing can't detect their automated nature.
-            random_queries = randomwordgenerator.generate_random_words(self.num_searches)
-            for query in random_queries:
-                self.browser.type_and_submit(AttributeType.Name, 'q', query, \
-                    clear_after_submit = True)
-                self.browser.sleep(self.sleep_time_between_searches)
+            self._execute_random_searches()
 
             # Try to read/capture the number of points accumulated today.
             current_device_points = self.account_manager.get_daily_device_points()[0]
 
+        if self._unable_to_read_points(current_device_points, target_device_points, max_device_points):
+            self._execute_random_searches()
         self.account_manager.open_dashboard()
 
     def run(self):
