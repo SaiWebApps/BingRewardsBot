@@ -76,8 +76,55 @@ class DesktopBingRewardsBot(Thread):
                 clear_after_submit = True)
             self.browser.sleep(self.sleep_time_between_searches)
     
-    def _unable_to_read_points(self, current, target, maximum):
-        return current == 0 or target == 0 or maximum == 0
+    def _get_point_stats(self):
+        '''
+            @return
+                A dictionary containing 4 key-value pairs:
+                - 'current': The # of device points accumulated today
+                - 'maximum': The maximum possible # of device points that can be accumulated today
+                - 'unable_to_read_current': A boolean; if true, then can't read number of device points 
+                accumulated today.
+                - 'unable_to_read_maximum': A boolean; if true, then can't read maximum number of device
+                points that can be accumulated today.
+        '''
+        daily_device_points = self.account_manager.get_daily_device_points()
+        return {
+            'current': daily_device_points[0],
+            'maximum': daily_device_points[1],
+            'unable_to_read_current': daily_device_points[0] == -1,
+            'unable_to_read_maximum': daily_device_points[1] == -1,
+            'read_both': daily_device_points[0] != -1 and daily_device_points[1] != -1
+        }
+
+    def _try_get_point_stats(self, num_retries = 1):
+        current = -1
+        maximum = -1
+
+        for i in range(0, num_retries):
+            device_point_stats = self._get_point_stats()
+            # If we read both stats successfully, return dictionary immediately.
+            if device_point_stats['read_both']:
+                return device_point_stats
+
+            # Salvage as much info as possible from current attempt.
+            if not device_point_stats['unable_to_read_current']:
+                current = device_point_stats['current']
+            if not device_point_stats['unable_to_read_maximum']:
+                maximum = device_point_stats['maximum']
+
+        if maximum == -1:
+            maximum = current + int(self.num_searches / 2)
+
+        # At this point, we were not able to read at least 1 stat.
+        # So, populate dictionary w/ what data we managed to gather, and compute booleans
+        # based on gathered data.
+        return {
+            'current': current,
+            'maximum': maximum,
+            'unable_to_read_current': daily_device_points[0] == -1,
+            'unable_to_read_maximum': daily_device_points[1] == -1,
+            'read_both': daily_device_points[0] != -1 and daily_device_points[1] != -1
+        }
 
     def perform_random_searches(self):
         '''
@@ -89,42 +136,39 @@ class DesktopBingRewardsBot(Thread):
                 such a case, we can't guarantee the accumulation of the appropriate 
                 number of points.
         '''
-        # Total lifetime number of points
-        daily_device_points = self.account_manager.get_daily_device_points()
-        # Number of points accumulated today
-        current_device_points = daily_device_points[0]
-        # Maximum number of points that can be accumulated today
-        max_device_points = daily_device_points[1]
-        # Should be >= max_device_points
-        target_device_points = current_device_points + int(self.num_searches / 2)
+        MAX_RETRIES = 5
 
+        stats = self._try_get_point_stats(MAX_RETRIES)
+
+        # Open Bing home page.
         self.browser.open('http://www.bing.com')
 
-        current_num_retries = 0
-        MAX_NUM_RETRIES = 5
-
-        while current_device_points < target_device_points and target_device_points < max_device_points and \
-                current_num_retries < MAX_NUM_RETRIES:
-            # If we can't read the current number of points or the maximum
-            # possible number of points, then increment the number of retries.
-            if self._unable_to_read_points(current_device_points, target_device_points, max_device_points):
-                current_num_retries = current_num_retries + 1
-
+        # Perform the specified number of random searches until either the
+        # current number of accumulated points exceeds the maximum possible
+        # points for today, OR we've hit the retry ceiling.
+        num_retries = 0
+        while stats['current'] < stats['maximum'] and num_retries < MAX_RETRIES:
             self._execute_random_searches()
+            stats = self._try_get_point_stats(MAX_RETRIES)
+            if stats['unable_to_read_current']:
+                num_retries = num_retries + 1
 
-            # Try to read/capture the number of points accumulated today.
-            current_device_points = self.account_manager.get_daily_device_points()[0]
-
-        if self._unable_to_read_points(current_device_points, target_device_points, max_device_points):
-            self._execute_random_searches()
         self.account_manager.open_dashboard()
+
+    def view_special_offers(self):
+        offer_points = self.account_manager.get_daily_offer_points()
+        (current, maximum) = (offer_points[0], offer_points[1])
+        (current_num_retries, max_num_retries) = (0, 3)
+        while current < maximum and current_num_retries < max_num_retries:
+            self.account_manager.accumulate_special_offer_points()
+            current_num_retries = current_num_retries + 1
 
     def run(self):
         try:
             self.initialize()
             self.account_manager.sign_in()
             self.perform_random_searches()
-            self.account_manager.accumulate_special_offer_points()
+            self.view_special_offers()
             print(self.account_manager)
             self.account_manager.sign_out()
         finally:

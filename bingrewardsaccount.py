@@ -190,7 +190,7 @@ class DesktopAccountManager(AbstractAccountManager):
 
     @convert_result_to_uint
     @open_stats_iframe
-    def _get_daily_statistic(self, target_xpath):
+    def _get_daily_statistics(self, target_xpath):
         '''
             @description
                 Navigate to the Bing Rewards dashboard, open the points flyout,
@@ -202,9 +202,9 @@ class DesktopAccountManager(AbstractAccountManager):
             @return
                 A 2-element list, where the first element is the current get_value
                 of the daily stat, and the second is the max possible value for that 
-                stat. If we are unable to read either value, then return [0,0].
+                stat. If we are unable to read either value, then return [-1,-1].
         '''
-        output = [0, 0] # [current, max]
+        output = [-1, -1]
         daily_points = self.browser.get_value(AttributeType.XPath, target_xpath)
         if daily_points:
             output = daily_points.split('/')
@@ -223,17 +223,18 @@ class DesktopAccountManager(AbstractAccountManager):
         return self.browser.get_value(AttributeType.Id, 'id_rc')
 
     def get_daily_device_points(self):
-        return self._get_daily_statistic(DAILY_CURRENT_PC_POINTS_XPATH)
+        return self._get_daily_statistics(DAILY_CURRENT_PC_POINTS_XPATH)
 
     def get_daily_offer_points(self):
-        return self._get_daily_statistic(DAILY_CURRENT_PC_OFFER_POINTS_XPATH)
+        return self._get_daily_statistics(DAILY_CURRENT_PC_OFFER_POINTS_XPATH)
 
     def sign_out(self):
         self.browser.click(AttributeType.Id, 'id_n')
         self.browser.sleep(5)
         self.browser.click(AttributeType.XPath, '//*[@id="b_idProviders"]/li/a/span[2]')
         self.browser.sleep(5)
-        return self.browser.get_value(AttributeType.Id, 'id_n').strip() != ''
+        return self.browser.get_value(AttributeType.Id, 'id_n') and \
+            self.browser.get_value(AttributeType.Id, 'id_n').strip() != ''
 
 class MobileAccountManager(AbstractAccountManager):
     def get_device_class(self):
@@ -251,11 +252,15 @@ class MobileAccountManager(AbstractAccountManager):
     @convert_result_to_uint
     @go_to_and_return_from(_DASHBOARD_URL)
     def get_daily_device_points(self):
-        return [self.browser.get_value(AttributeType.XPath, DAILY_CURRENT_MOBILE_POINTS_XPATH), \
-            self.browser.get_value(AttributeType.XPath, DAILY_MAX_MOBILE_POINTS_XPATH).strip('/')]
+        current_mobile_points = self.browser.get_value(AttributeType.XPath, DAILY_CURRENT_MOBILE_POINTS_XPATH)
+        maximum_mobile_points = self.browser.get_value(AttributeType.XPath, DAILY_MAX_MOBILE_POINTS_XPATH).strip('/')
+        return [current_mobile_points if current_mobile_points else -1, \
+            maximum_mobile_points if maximum_mobile_points else -1]
 
     @convert_result_to_uint
     @go_to_and_return_from(_DASHBOARD_URL)
     def get_daily_offer_points(self):
-        return [self.browser.get_value(AttributeType.XPath, DAILY_CURRENT_MOBILE_OFFER_POINTS_XPATH), \
-            self.browser.get_value(AttributeType.XPath, DAILY_MAX_MOBILE_OFFER_POINTS_XPATH).strip('/')]
+        current_offer_points = self.browser.get_value(AttributeType.XPath, DAILY_CURRENT_MOBILE_OFFER_POINTS_XPATH)
+        maximum_offer_points = self.browser.get_value(AttributeType.XPath, DAILY_MAX_MOBILE_OFFER_POINTS_XPATH).strip('/')
+        return [current_offer_points if current_offer_points else -1, \
+            maximum_offer_points if maximum_offer_points else -1]
