@@ -88,6 +88,8 @@ class DesktopBingRewardsBot(Thread):
                 points that can be accumulated today.
         '''
         daily_device_points = self.account_manager.get_daily_device_points()
+        if not daily_device_points:
+        	daily_device_points = [-1, -1]
         return {
             'current': daily_device_points[0],
             'maximum': daily_device_points[1],
