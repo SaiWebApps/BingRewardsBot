@@ -13,8 +13,8 @@ To accumulate Bing Rewards points, one must perform 30 desktop-based and 20 mobi
 Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), this could be difficult, whether due to forgetfulness or habit. So, this script will allow them to easily accumulate those points on days where they've neglected to perform the necessary amount of Bing searches.
 
 ## Prerequisites
-* <a href="https://www.python.org/ftp/python/3.4.3/python-3.4.3.msi">Python 3.4</a>
-* requests, selenium - After installing python, you can install these via "pip install -r requirements.txt". We strongly recommend executing this command and installing these modules within a Python virtual environment (virtualenv).
+* Python 3.4 or above
+* requests, selenium, sqlalchemy - After installing python, you can install these via "pip install -r requirements.txt". We strongly recommend executing this command and installing these modules within a Python virtual environment (virtualenv).
 
 ## Supported Browsers
 ### WINDOWS
@@ -25,10 +25,10 @@ Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), thi
 | Mobile  | &#9745;   | &#9745;   | &#9745;              |
 
 ### LINUX
-|         | Firefox   | Chrome    | Headless (PhantomJS) |
-| ------- | --------- | --------- | -------------------- |
-| Desktop | &#9745;   |           | &#9745;              |
-| Mobile  | &#9745;   |           | &#9745;              |
+|         | Firefox   | Headless (PhantomJS) |
+| ------- | --------- | -------------------- |
+| Desktop | &#9745;   | &#9745;              |
+| Mobile  | &#9745;   | &#9745;              |
 
 ## Usage
 usage: driver.py [-h] -f FILENAME [-e EMAIL_ADDRESSES]
@@ -57,4 +57,5 @@ The given email addresses and passwords will then either be appended to the spec
 * ~~Multi-threading - Execute {account 1, account 2, etc.} searches in parallel.~~
 * ~~Pass in account credentials to driver.py via command-line (raw-args, JSON/XML file, etc.).~~
 * ~~Encrypt passwords in JSON file(s) created by credentialsprocessor module.~~
+* ~~Implement SQL-lite credentials processing alternative to the JSON credentials processor.~~
 * Create GUI for adding and saving account credentials.
