@@ -8,8 +8,8 @@ from selenium.webdriver.support import expected_conditions as ExpectedCondition
 
 from webdrivermanager import webdrivermanager
 
-_WAIT_TIME_SECONDS = 10
-_NUM_RETRIES = 2
+_WAIT_TIME_SECONDS = 5
+_NUM_RETRIES = 1
 
 class AttributeType(enum.Enum):
     Id = By.ID
