@@ -13,8 +13,16 @@ To accumulate Bing Rewards points, one must perform 30 desktop-based and 20 mobi
 Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), this could be difficult, whether due to forgetfulness or habit. So, this script will allow them to easily accumulate those points on days where they've neglected to perform the necessary amount of Bing searches.
 
 ## Prerequisites
-* Python 3.4 or above
-* requests, selenium, sqlalchemy - After installing python, you can install these via "pip install -r requirements.txt". We strongly recommend executing this command and installing these modules within a Python virtual environment (virtualenv).
+* Python 3.5 or above
+* randomwordgenerator-0.2
+* requests
+* selenium
+* sqlalchemy
+
+To install the latter 4 dependencies, run the following in the root/main directory:
+```
+pip install -r "requirements.txt"
+```
 
 ## Supported Browsers
 ### WINDOWS

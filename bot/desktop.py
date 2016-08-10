@@ -1,29 +1,8 @@
 from threading import Thread
 
-from browser_automation_utils.browser import AttributeType, Browser
-from bingrewardsaccount import DesktopAccountManager, MobileAccountManager
-from random_word_generator import randomwordgenerator
-
-class BotConfig:
-    def __init__(self, browser_type, num_searches, sleep_time_between_searches = 5):
-        '''
-            @param browser_type
-            (Required, browser_automation_utils.browsertypes.BrowserType)
-            Type of the browser that is going to automate Bing searches.
-
-            @param num_searches
-            (Required, int)
-            Number of Bing searches that will be automated.
-
-            @param sleep_time_between_searches
-            (Optional, Default Value = 5, int)
-            Number of seconds of delay between Bing searches.
-            Tricks Bing servers into thinking that human is performing searches, so
-            that we can accumulate points.
-        '''
-        self.browser_type = browser_type
-        self.num_searches = num_searches
-        self.sleep_time_between_searches = sleep_time_between_searches
+from account_manager.browser_automation_utils.browser import AttributeType, Browser
+from account_manager.desktop import DesktopAccountManager
+from randomwordgenerator import randomwordgenerator
 
 # Threads - 1:1 relationship between threads/bots and Bing-Rewards-Accounts
 class DesktopBingRewardsBot(Thread):
@@ -123,9 +102,9 @@ class DesktopBingRewardsBot(Thread):
         return {
             'current': current,
             'maximum': maximum,
-            'unable_to_read_current': daily_device_points[0] == -1,
-            'unable_to_read_maximum': daily_device_points[1] == -1,
-            'read_both': daily_device_points[0] != -1 and daily_device_points[1] != -1
+            'unable_to_read_current': current == -1,
+            'unable_to_read_maximum': maximum == -1,
+            'read_both': current != -1 and maximum != -1
         }
 
     def perform_random_searches(self):
@@ -175,50 +154,3 @@ class DesktopBingRewardsBot(Thread):
             self.account_manager.sign_out()
         finally:
             self.release()
-
-class MobileBingRewardsBot(DesktopBingRewardsBot):
-    def __init__(self, bot_config, account_credentials):
-        super().__init__(bot_config, account_credentials)
-
-    def initialize(self):
-        '''
-            @description
-            The only difference in this method-override is that we are using mobile,
-            not desktop, resources. 
-        '''
-        self.browser = Browser(self.browser_type, mobile = True)
-        self.account_manager = MobileAccountManager(self.browser, self.account_credentials)
-
-# Thread Pools
-class BingRewardsBotManager:
-    def __init__(self, desktop_bot_config, mobile_bot_config):
-        '''
-            @description
-            Constructor that creates a BingRewardsBotManager with the specified desktop and mobile
-            bot configuration.
-
-            @param desktop_bot_config
-            (Required) BotConfig instance for desktop.
-
-            @param mobile_bot_config
-            (Required) BotConfig instance for mobile.
-        '''
-        self.desktop_bot_config = desktop_bot_config
-        self.mobile_bot_config = mobile_bot_config
-
-    def execute(self, desktop_accounts, mobile_accounts):
-        '''
-            @description
-            Automate Bing searches, and accumulate Bing Rewards points for the given
-            collection of desktop and mobile accounts.
-
-            @param desktop_accounts
-            (Required) AccountCredentialsCollection for desktop
-
-            @param mobile_accounts
-            (Required) AccountCredentialsCollection for mobile
-        '''
-        bots = [DesktopBingRewardsBot(self.desktop_bot_config, account_credentials) for account_credentials in desktop_accounts.credentials_collection]
-        bots.extend([MobileBingRewardsBot(self.mobile_bot_config, account_credentials) for account_credentials in mobile_accounts.credentials_collection])
-        for bot in bots:
-            bot.start()

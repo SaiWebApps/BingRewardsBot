@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 
-from accountcredentialsmodels import AccountCredentialsCollection
+from models import AccountCredentialsCollection
 from simplesecurity import Password
 
 '''

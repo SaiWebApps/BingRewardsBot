@@ -1,7 +1,7 @@
 import json
 
-import accountcredentialsmodels
-import simplesecurity
+from models import AccountCredentialsCollection
+from simplesecurity import Password
 
 def process_credentials(filename):
     '''
@@ -17,8 +17,8 @@ def process_credentials(filename):
     with open(filename, 'r') as json_file_ptr:
         json_credentials = json.load(json_file_ptr)
         email_list = [json_obj['email'] for json_obj in json_credentials]
-        password_list = [simplesecurity.Password(json_obj['password'], json_obj['salt']) for json_obj in json_credentials]
-        return accountcredentialsmodels.AccountCredentialsCollection(email_list, password_list)
+        password_list = [Password(json_obj['password'], json_obj['salt']) for json_obj in json_credentials]
+        return AccountCredentialsCollection(email_list, password_list)
 
 def save_credentials(filename, email_addresses, passwords, delimiter = ','):
     '''
@@ -39,8 +39,8 @@ def save_credentials(filename, email_addresses, passwords, delimiter = ','):
         The separator between email addresses and passwords (e.g., a comma).
     '''
     email_address_list = [addr.strip() for addr in email_addresses.split(delimiter)]
-    password_list = [simplesecurity.Password(p.strip()) for p in passwords.split(delimiter)]
-    creds_collection = accountcredentialsmodels.AccountCredentialsCollection(email_address_list, password_list)
+    password_list = [Password(p.strip()) for p in passwords.split(delimiter)]
+    creds_collection = AccountCredentialsCollection(email_address_list, password_list)
     with open(filename, 'a') as json_file_ptr:
     	json.dump(creds_collection.to_std_structure(), json_file_ptr, sort_keys = True, indent = 4, separators = (',', ':'))
     return process_credentials(filename)

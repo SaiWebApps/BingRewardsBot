@@ -1,17 +1,17 @@
 import argparse
 import getpass
 
-from bingrewardsbot import BotConfig, BingRewardsBotManager
-from browser_automation_utils.browsertypes import BrowserType
-from credentials_processor import sqllitecredentialsprocessor
+from bot.botconfig import PhantomJSBotConfig
+from bot.manager import BingRewardsBotManager
+from bot.account_manager.credentials import sqlliteprocessor
 
 def get_credentials(filename, email_addresses):
     if not email_addresses:
-        return sqllitecredentialsprocessor.process_credentials(filename)
+        return sqlliteprocessor.process_credentials(filename)
     email_address_list = email_addresses.split(',')
     password_list = [getpass.getpass('Password for ' + email + ': ') for email in email_address_list]
     passwords = ','.join(password_list)
-    return sqllitecredentialsprocessor.save_credentials(filename, email_addresses, passwords)
+    return sqlliteprocessor.save_credentials(filename, email_addresses, passwords)
 
 def main():
     # Extract target Bing Rewards accounts' credentials from the specified JSON file.
@@ -27,8 +27,8 @@ def main():
     creds = get_credentials(args.filename, args.email_addresses)
 
     # Perform searches.
-    desktop_bot_config = BotConfig(BrowserType.PhantomJS, 30)
-    mobile_bot_config = BotConfig(BrowserType.PhantomJS, 20)
+    desktop_bot_config = PhantomJSBotConfig(30)
+    mobile_bot_config = PhantomJSBotConfig(20)
     mgr = BingRewardsBotManager(desktop_bot_config, mobile_bot_config)
     mgr.execute(creds, creds)
 

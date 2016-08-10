@@ -1,7 +1,7 @@
 import base64
 import random
 
-from random_word_generator import backup
+from randomwordgenerator import backup
 
 class Password:
     def __init__(self, password, salt = None):
