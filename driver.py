@@ -3,7 +3,7 @@ import getpass
 
 from bingrewardsbot import BotConfig, BingRewardsBotManager
 from browser.webdrivermanager.browsertypes import BrowserType
-from credentialsprocessor import sqllitecredentialsprocessor
+from credentials_processor import sqllitecredentialsprocessor
 
 def get_credentials(filename, email_addresses):
     if not email_addresses:
@@ -17,12 +17,12 @@ def main():
     # Extract target Bing Rewards accounts' credentials from the specified JSON file.
     parser = argparse.ArgumentParser(description = 'Accumulate daily Bing Rewards desktop and mobile points.')
     parser.add_argument('-f', '--filename', required = True, \
-        help = 'Name of JSON file with Bing Rewards account credentials; \
-                if it does not exist, specify alongside "-e" to create.')
+        help = 'Name of JSON file with Bing Rewards account credentials;' + \
+               'if it does not exist, specify alongside "-e" to create.')
     parser.add_argument('-e', '--email_addresses', required = False, \
-        help = 'Comma-separated Bing Rewards accounts\' email addresses; \
-                will be added to credentials JSON file if it already exists \
-                but will create and add to a new JSON file if it doesn\'t.')
+        help = 'Comma-separated Bing Rewards accounts\' email addresses;' + \
+                'will be added to credentials JSON file if it already exists' + \
+                'but will create and add to a new JSON file if it doesn\'t.')
     args = parser.parse_args()
     creds = get_credentials(args.filename, args.email_addresses)
 
