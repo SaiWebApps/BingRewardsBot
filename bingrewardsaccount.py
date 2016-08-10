@@ -1,6 +1,6 @@
 import enum
 
-from browser.browser import AttributeType
+from browser_automation_utils.browser import AttributeType
 
 # Constants
 _SIGN_IN_URL = 'https://www.bing.com/rewards/signin'
