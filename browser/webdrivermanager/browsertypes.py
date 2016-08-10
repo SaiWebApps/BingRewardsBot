@@ -97,12 +97,11 @@ WEBDRIVER_CONFIG = {
     },
     BrowserType.Chrome.value: {
         SELENIUM_WEBDRIVER: ChromeDriver,
-        'win32': 'webdrivers/chromedriver.exe',
-        'linux': 'webdrivers/chromedriver'
+        'win32': 'bin/chromedriver.exe'
     },
     BrowserType.PhantomJS.value: {
         SELENIUM_WEBDRIVER: PhantomJSDriver,
-        'win32': 'webdrivers/phantomjsdriver.exe',
-        'linux': 'webdrivers/phantomjs'
+        'win32': 'bin/phantomjsdriver.exe',
+        'linux': 'bin/phantomjs'
     }
 }
