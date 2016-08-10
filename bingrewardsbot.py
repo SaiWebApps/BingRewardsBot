@@ -8,7 +8,7 @@ class BotConfig:
     def __init__(self, browser_type, num_searches, sleep_time_between_searches = 5):
         '''
             @param browser_type
-            (Required, browser.webdrivermanager.browsertypes.BrowserType)
+            (Required, browser.browsertypes.BrowserType)
             Type of the browser that is going to automate Bing searches.
 
             @param num_searches

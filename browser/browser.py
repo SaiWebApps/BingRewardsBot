@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ExpectedCondition
 
-from webdrivermanager import webdrivermanager
+import webdrivermanager
 
 _WAIT_TIME_SECONDS = 5
 _NUM_RETRIES = 1
@@ -24,7 +24,7 @@ class Browser:
     def __init__(self, browser_type, url = None, mobile = False):
         '''
             @param browser_type
-                (Required) A webdrivermanager.browsertypes.BrowserType enum value
+                (Required) A browsertypes.BrowserType enum value
                 that specifies the type of browser to use for automation.
 
             @param url

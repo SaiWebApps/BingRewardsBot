@@ -2,7 +2,7 @@ import argparse
 import getpass
 
 from bingrewardsbot import BotConfig, BingRewardsBotManager
-from browser.webdrivermanager.browsertypes import BrowserType
+from browser.browsertypes import BrowserType
 from credentials_processor import sqllitecredentialsprocessor
 
 def get_credentials(filename, email_addresses):
