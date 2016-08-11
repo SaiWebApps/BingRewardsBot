@@ -22,5 +22,8 @@ class BotConfig:
         self.sleep_time_between_searches = sleep_time_between_searches
 
 class PhantomJSBotConfig(BotConfig):
+    '''
+        Extension of BotConfig that uses headless/PhantomJS Selenium driver.
+    '''
     def __init__(self, num_searches, sleep_time_between_searches = 5):
         super().__init__(BrowserType.PhantomJS, num_searches, sleep_time_between_searches)

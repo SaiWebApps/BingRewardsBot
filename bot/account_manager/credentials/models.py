@@ -1,7 +1,3 @@
-class InvalidCredentialsSchemaError(Exception):
-    def __init__(self, message = 'Account credentials must contain an email, a password, and a salt.'):
-        super().__init__(message)
-
 class AccountCredentials:
     def __init__(self, email, password):
         '''
@@ -14,8 +10,6 @@ class AccountCredentials:
             @param password
             Encrypted password of Bing Rewards account; an instance of the simplesecurity.Password class.
         '''
-        if not email or not password:
-        	raise InvalidCredentialsSchemaError
         self.email = email
         self.password = password
 
@@ -32,10 +26,11 @@ class AccountCredentialsCollection:
             - List of encrypted Bing Rewards accounts' passwords (simplesecurity.Password objects).
             - The size of this list SHALL equal that of email_list
         '''
-        if not email_list or not password_list or len(email_list) != len(password_list):
-            raise InvalidCredentialsSchemaError
         num_creds = len(email_list)
         self.credentials_collection = [AccountCredentials(email_list[i], password_list[i]) for i in range(0, num_creds)]
 
     def to_std_structure(self):
         return [obj.to_std_structure() for obj in self.credentials_collection]
+
+    def size(self):
+        return len(self.to_std_structure())

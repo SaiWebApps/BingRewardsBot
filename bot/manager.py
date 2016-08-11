@@ -3,36 +3,47 @@ from mobile import MobileBingRewardsBot
 
 # Thread Pools
 class BingRewardsBotManager:
-    def __init__(self, desktop_bot_config, mobile_bot_config):
+    def __init__(self, desktop_bot_config, desktop_accounts, mobile_bot_config, mobile_accounts):
         '''
             @description
-            Constructor that creates a BingRewardsBotManager with the specified desktop 
-            and mobile bot configuration.
+            Constructor that creates a set of desktop and mobile Bing Rewards 
+            bots with the specified configurations and for the given accounts.
 
             @param desktop_bot_config
-            (Required) BotConfig instance for desktop.
-
-            @param mobile_bot_config
-            (Required) BotConfig instance for mobile.
-        '''
-        self.desktop_bot_config = desktop_bot_config
-        self.mobile_bot_config = mobile_bot_config
-
-    def execute(self, desktop_accounts, mobile_accounts):
-        '''
-            @description
-            Automate Bing searches, and accumulate Bing Rewards points for the given
-            collection of desktop and mobile accounts.
+            (Required) BotConfig instance for desktop
 
             @param desktop_accounts
             (Required) AccountCredentialsCollection for desktop
+            
+            @param mobile_bot_config
+            (Required) BotConfig instance for mobile
 
             @param mobile_accounts
             (Required) AccountCredentialsCollection for mobile
         '''
-        bots = [DesktopBingRewardsBot(self.desktop_bot_config, account_credentials) \
-            for account_credentials in desktop_accounts.credentials_collection]
-        bots.extend([MobileBingRewardsBot(self.mobile_bot_config, account_credentials) \
-            for account_credentials in mobile_accounts.credentials_collection])
-        for bot in bots:
+        self.bot_list = [DesktopBingRewardsBot(desktop_bot_config, account) \
+            for account in desktop_accounts.credentials_collection]
+        self.bot_list.extend([MobileBingRewardsBot(mobile_bot_config, account) \
+            for account in mobile_accounts.credentials_collection])
+
+    def run(self):
+        '''
+            @description
+            Run the desktop and/or mobile Bing Rewards bots in bot_list.
+        '''
+        for bot in self.bot_list:
             bot.start()
+
+    def count_finished_bots(self):
+        '''
+            @return
+            The number of Bing Rewards bots that have finished executing.
+        '''
+        return sum([bot.done for bot in self.bot_list])
+
+    def get_percent_completed(self):
+        '''
+            @return
+            The percentage of bots in bot_list that have finished executing.
+        '''
+        return 100 * (self.count_finished_bots() / len(self.bot_list))

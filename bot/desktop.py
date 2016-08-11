@@ -18,6 +18,9 @@ class DesktopBingRewardsBot(Thread):
         '''
         super().__init__()
 
+        # True if done executing, False otherwise
+        self.done = False
+
         # Save parameters.
         self.browser_type = bot_config.browser_type
         self.num_searches = bot_config.num_searches
@@ -154,3 +157,5 @@ class DesktopBingRewardsBot(Thread):
             self.account_manager.sign_out()
         finally:
             self.release()
+            # We're done, so update "done" status variable.
+            self.done = True
