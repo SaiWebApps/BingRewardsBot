@@ -1,4 +1,4 @@
-from threading import Thread
+from threading import Thread, Lock
 
 from account_manager.browser_automation_utils.browser import AttributeType, Browser
 from account_manager.desktop import DesktopAccountManager
@@ -19,7 +19,8 @@ class DesktopBingRewardsBot(Thread):
         super().__init__()
 
         # True if done executing, False otherwise
-        self.done = False
+        self.done_mutex = Lock()
+        self._done = False
 
         # Save parameters.
         self.browser_type = bot_config.browser_type
@@ -30,6 +31,16 @@ class DesktopBingRewardsBot(Thread):
         # Vars to be defined later
         self.browser = None
         self.account_manager = None
+
+    @property
+    def done(self):
+        with self.done_mutex:
+            return self._done    
+
+    @done.setter
+    def done(self, value):
+        with self.done_mutex:
+            self._done = value
 
     def initialize(self):
         '''
