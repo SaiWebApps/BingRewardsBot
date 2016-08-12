@@ -14,6 +14,7 @@ Now, for those who prefer non-Bing search engines (i.e, Google, DuckDuckGo), thi
 
 ## Prerequisites
 * Python 3.5 or above
+* PyQt5
 * randomwordgenerator-0.2
 * requests
 * selenium
@@ -38,7 +39,7 @@ pip install -r "requirements.txt"
 | Desktop | &#9745;   | &#9745;              |
 | Mobile  | &#9745;   | &#9745;              |
 
-## Usage
+## Command-Line Driver Usage
 usage: driver.py [-h] -f FILENAME [-e EMAIL_ADDRESSES]
 
 Accumulate daily Bing Rewards desktop and mobile points.
@@ -58,12 +59,9 @@ optional arguments:
 If the "-e" flag is specified, driver.py will prompt for a password for each of the provided email accounts.
 The given email addresses and passwords will then either be appended to the specified JSON file name if it already exists or written to a new JSON file with the given filename if it doesn't.
 
-## TODO
-* ~~For each account, display list of points before and after searches to confirm script's success.~~
-* ~~Accumulate points successfully on Windows for Firefox, Chrome, and Headless/PhantomJS browsers.~~
-* ~~Accumulate special offer points.~~
-* ~~Multi-threading - Execute {account 1, account 2, etc.} searches in parallel.~~
-* ~~Pass in account credentials to driver.py via command-line (raw-args, JSON/XML file, etc.).~~
-* ~~Encrypt passwords in JSON file(s) created by credentialsprocessor module.~~
-* ~~Implement SQL-lite credentials processing alternative to the JSON credentials processor.~~
-* Create GUI for adding and saving account credentials.
+## GUI Usage
+```
+>> python guidriver.py
+```
+Use the left-hand email and password field to add credentials to the bot's registry.
+The bot will then accumulate Bing Rewards Points for the accounts in its registry.
