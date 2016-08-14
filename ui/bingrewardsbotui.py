@@ -62,3 +62,22 @@ class BingRewardsBotWidget(QWidget):
 		self.run_bot_button.show(self.layout)
 
 		self.setLayout(self.layout)
+
+class BingRewardsBotApp(QApplication):
+	def __init__(self):
+		super().__init__(sys.argv)
+
+	def run(self, credentials_db_filename):
+		'''
+			@description
+			Open up a new window with a form to add Bing Rewards account credentials,
+			track the accounts that have already been added, and run the Bing Rewards
+			Bot using the accounts in the provided credentials database file.
+			
+			@param credentials_db_filename
+			A SQLite database file with the credentials for the Bing Rewards accounts
+			for which we want to accumulate the daily desktop and mobile points.
+		'''
+		bing_rewards_bot_widget = BingRewardsBotWidget(credentials_db_filename)
+		bing_rewards_bot_widget.show()
+		sys.exit(self.exec_())
