@@ -2,8 +2,6 @@ from PyQt5.QtWidgets import *
 
 from bot.account_manager.credentials import sqliteprocessor
 
-CREDENTIALS_DB = 'credentials.db'
-
 class BasicGUIElement:
 	def __init__(self, name):
 		self.name = name

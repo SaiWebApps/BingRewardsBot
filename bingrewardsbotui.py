@@ -24,9 +24,9 @@ class BotProgressMonitor(QThread):
 				last_observed_progress = current_progress
 
 class BingRewardsBotWidget(QWidget):
-	def __init__(self):
+	def __init__(self, db_filename):
 		super().__init__()
-		self.init_ui()
+		self.init_ui(db_filename)
 
 	def update_progress_bar(self, value):
 		self.progress_bar.setValue(value)
@@ -51,11 +51,11 @@ class BingRewardsBotWidget(QWidget):
 
 		self.run_bot_button.disable()
 
-	def init_ui(self):
+	def init_ui(self, db_filename):
 		self.setWindowTitle('Bing Rewards Bot')
 		
 		self.layout = QVBoxLayout()
-		self.credentials_ui = CredentialsUI()
+		self.credentials_ui = CredentialsUI(db_filename)
 		self.layout.addLayout(self.credentials_ui.layout)
 
 		self.run_bot_button = SubmitButton('Run Bing Rewards Bot', self.run_bot)

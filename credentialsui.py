@@ -4,15 +4,16 @@ from bot.account_manager.credentials import sqliteprocessor
 from baseui import *
 
 class CredentialsListView(BasicGUIElement):
-	def __init__(self, name):
+	def __init__(self, name, db_filename):
 		super().__init__(name)
 		self.label = QLabel(name)
+		self.db_filename = db_filename
 		self.credentials_list = QListWidget()
 		for credentials in self.get_all().to_std_structure():
 			self.add(credentials['email'])
 
 	def get_all(self):
-		return sqliteprocessor.process_credentials(CREDENTIALS_DB)
+		return sqliteprocessor.process_credentials(self.db_filename)
 
 	def add(self, email):
 		self.credentials_list.addItem(QListWidgetItem(email))
@@ -22,13 +23,14 @@ class CredentialsListView(BasicGUIElement):
 		layout.addWidget(self.credentials_list)
 
 class AddCredentialsForm(SubmitForm):
-	def __init__(self):
+	def __init__(self, db_filename):
 		super().__init__(QVBoxLayout(), TextField('Email Address'), \
 			TextField('Password', True, self.process_credentials), \
 			SubmitButton('Add Credentials', self.process_credentials))
+		self.db_filename = db_filename
 
 	def add_credentials(self, email, password):
-		sqliteprocessor.save_credentials(CREDENTIALS_DB, email, password)
+		sqliteprocessor.save_credentials(self.db_filename, email, password)
 
 	def process_credentials(self):
 		email_field = self.get_element('Email Address')
@@ -43,10 +45,10 @@ class AddCredentialsForm(SubmitForm):
 		password_field.clear()
 
 class CredentialsUI(AddCredentialsForm):
-	def __init__(self):
-		super().__init__()
+	def __init__(self, db_filename):
+		super().__init__(db_filename)
 
-		all_creds = CredentialsListView('Emails Registered with Bot')
+		all_creds = CredentialsListView('Emails Registered with Bot', db_filename)
 		self.elements[all_creds.name] = all_creds
 
 		overall_layout = QHBoxLayout()
