@@ -60,8 +60,19 @@ If the "-e" flag is specified, driver.py will prompt for a password for each of 
 The given email addresses and passwords will then either be appended to the specified JSON file name if it already exists or written to a new JSON file with the given filename if it doesn't.
 
 ## GUI Usage
-```
->> python guidriver.py
-```
-Use the left-hand email and password field to add credentials to the bot's registry.
-The bot will then accumulate Bing Rewards Points for the accounts in its registry.
+usage: guidriver.py [-h] -f DB_FILENAME
+
+Accumulate daily Bing Rewards desktop and mobile points.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f DB_FILENAME, --db_filename DB_FILENAME
+                        Name of the SQLite database file (*.db) with the
+                        target Bing Rewards accounts' credentials; if the
+                        provided filename does not exist, then it shall be
+                        created.
+
+In the actual GUI:
+* The left-hand side (email and password fields, "Add Credentials" button) contains a form to add Bing Rewards accounts' credentials to the bot's email registry.
+* The right-hand side (a list of email addresses) shows the email addresses of Bing Rewards accounts that have been successfully added to the bot's email registry. This data is persistent (lasts across app sessions) so long as the credentials database file is not deleted.
+* The bottom-most button ("Run") is used to run the Bing Rewards bot for the email addresses in its registry.
